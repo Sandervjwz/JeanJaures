@@ -1,0 +1,110 @@
+:root {
+   --primary: white;
+   --secondary: black;
+   --test: hotpink;
+   /*--on-primary: #fafafa;
+   --on-secondary: #000504;*/
+}
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   background-color: var(--primary);
+   /*color: var(--secondary); --------terug aanzetten*/
+}
+
+header {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 2em;
+   display: flex;
+   width: auto;
+   flex-direction: row;
+   justify-content: center;
+   align-self: center;
+}
+
+header .menuItem {
+   margin: auto;
+}
+
+header a {
+   color: var(--secondary);
+   text-decoration: none;
+}
+
+main {
+   margin-top: 2em;
+}
+
+img {
+   height: 500px;
+}
+
+#agendaContainer {
+   display: flex;
+}
+
+#agendaLegende {
+   display: flex;
+   flex-direction: column;
+}
+
+.agendaLegende {
+   display: flex;
+}
+
+.kleurvakje {
+   width: 2em;
+   height: 2em;
+   padding: 0, 3em;
+}
+
+.groen {
+   background-color: green;
+}
+
+.oranje {
+   background-color: orange;
+}
+
+.paars {
+   background-color: purple;
+}
+
+.overzicht {
+   display: flex;
+}
+
+.overzicht img {
+   height: 300px;
+}
+
+.overzicht .resultaat {
+   text-align: center;
+}
+
+:target::before {
+   content: "";
+   display: block;
+   height: 2em;
+   /* fixed header height*/
+   margin: -2em 0 0;
+   /* negative fixed header height */
+}
+
+footer {
+   text-align: center;
+}
+
+/*
+main div {
+   color: hotpink;
+}
+
+.menuItem {
+   color: hotpink;
+}*/
