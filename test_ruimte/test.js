@@ -34,3 +34,6 @@ function maakScoreSchema(index){
     }
     return resultaat
 }
+
+
+
