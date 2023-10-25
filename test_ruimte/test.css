@@ -17,3 +17,15 @@
     justify-content: space-between;
 }
 
+#divinput{
+    width: fit-content;
+    padding: 15px;
+}
+
+#testspan{
+    color: hotpink;
+}
+
+#inputvakje{
+    width: 150px;
+}
