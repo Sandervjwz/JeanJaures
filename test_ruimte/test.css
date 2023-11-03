@@ -35,3 +35,29 @@
 #inputvakje{
     width: 150px;
 }
+
+.header {
+    color: white;
+    background-color: black;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.naam {
+    width: 30%;
+}
+
+.point {
+    width: 1.2em;
+}
+
+.result {
+    width: 15%;
+}
+
+/*.element {
+    color: hotpink;
+}*/
