@@ -95,97 +95,49 @@ function init(){
         const jsData = JSON.parse(rep.substring(47).slice(0, -2))
         console.log(jsData);
         const colz = [];
-        //first = true;
         jsData.table.cols.forEach(heading => {
-            /*if(first){
-                first = false;
-                console.log(heading);
-                console.log("eerste")
-            } else { && !first
-            }*/
             if(heading.label != null){
-                //console.log("tweede", heading.id, heading.id.charCodeAt(0))
                 if (heading.id.charCodeAt(0) < 76){
-                    //console.log(heading.id);
                     colz.push(heading.label.toLowerCase().replace(/\s/g, ''));
                 } 
             }
         })
-        //colz.slice(-2);
-        //console.log("colz", colz);
         jsData.table.rows.forEach(main => {
-            //console.log("main", main);
             const row = {};
             cur_arr = []
             for(var i = 0; i < colz.length; i++){
-                cur_arr.push((main.c[i] != null) ? main.c[i].v : '-')
-                //console.log(cur_arr);
+                cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
             }
             data.push(cur_arr);
-            /*colz.forEach((ele, ind) => {
-                //console.log(ele, ind);
-                row[i] = (main.c[ind] != null) ? main.c[ind].v : '';
-                console.log("/row = data/", row, "ele = ?", ele, "ind", ind, "main", ((main.c[ind] != null) ? main.c[ind].v : ''), row);
-            })
-            console.log("row", row);*/
         })
         maker(data);
-        //console.log("data", data);
     })
 }
 
 function maker(json){
-    //console.log(json)
     const reeks_A = [];
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
-        //console.log(json[i])
         if(i < 9){
             reeks_A.push(json[i])
         } else {
             reeks_B.push(json[i])            
         }
     }
-    //console.log(reeks_A, reeks_B);
     arrMakeOver(reeks_A, true);
     arrMakeOver(reeks_B, false);
     console.log(reeks_A, reeks_B);
     let first = true;
-    /*json.forEach(el => {
-        //console.log(el);
-        
-        console.log('el', el)
-        const keys = Object.keys(el);
-        div.style.gridTemplateColumns = `repeat (${keys.length}, 1fr)`
-        if(first){
-            first = false;
-            keys.forEach(heading => {
-                const ele = document.createElement('div');
-                ele.textContent = heading.toUpperCase();
-                ele.style.background = 'Black'
-                ele.style.color = 'white'
-                div.append(ele);
-            })
-        }
-        keys.forEach(key => {
-            const ele = document.createElement('div');
-            ele.textContent = el[key];
-            ele.style.border = '1px solid #ddd'
-            div.append(ele);
-        })
-    })*/
 }
 
 function arrMakeOver(arr, bool){
     for(var i = 0; i < arr.length; i++){   
         if(bool){
             arr[i].splice(9,1)
-            //console.log(arr[i])
         } 
         if(i != 0){
             arr[i][0] = arr[i][0].slice(2);
             arr[i][i] = 'X'         
-            //console.log(arr[i][0].slice(2))
         }
     }
     arrInRows(arr);
@@ -196,15 +148,10 @@ function arrInRows(arr){
     div.style.display = 'grid';
     div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
     first = true;
-    //console.log(arr, arr[0])
     arr.forEach(line => {
         if(line === arr[0]){
             div.append(makeElement(arrinColumns(line), "header", "row"));
-        } else {            
-            //var test = arrinColumns(line);
-            //console.log(line, test);
-            //arrinColumns(line, line);
-            //console.log(line, ele);
+        } else {
             div.append(makeElement(arrinColumns(line), "line", "row"));
         }
     })
@@ -212,7 +159,6 @@ function arrInRows(arr){
 }
 
 function arrinColumns(arr){
-    //console.log(arr);
     const rowResult = document.createElement('div');
     for(var i = 0; i < arr.length; i++){
         switch(i){
@@ -226,7 +172,6 @@ function arrinColumns(arr){
                 rowResult.append(makeElement(arr[i], "element", "point"))
         }
     }
-    //console.log(rowResult, rowResult.innerHTML);
     return rowResult.innerHTML
 }
 
