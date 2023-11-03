@@ -95,61 +95,92 @@ function init(){
         const jsData = JSON.parse(rep.substring(47).slice(0, -2))
         console.log(jsData);
         const colz = [];
-        first = true;
         jsData.table.cols.forEach(heading => {
-            if(first){
-                first = false;
-                console.log(heading);
-                console.log("eerste")
-            } else {
-                if(heading.label != null && !first){
-                    console.log("tweede")
+            if(heading.label != null){
+                if (heading.id.charCodeAt(0) < 76){
                     colz.push(heading.label.toLowerCase().replace(/\s/g, ''));
                 } 
-            } 
-            //console.log("colz", colz);
+            }
         })
         jsData.table.rows.forEach(main => {
-            //console.log("main", main);
             const row = {};
-            colz.forEach((ele, ind) => {
-                //console.log(ele, ind);
-                row[ele] = (main.c[ind] != null) ? main.c[ind].v : '';
-                //console.log("row", row, "ele", ele, "ind", ind);
-            })
-            data.push(row);
+            cur_arr = []
+            for(var i = 0; i < colz.length; i++){
+                cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
+            }
+            data.push(cur_arr);
         })
         maker(data);
-            console.log("data", data);
     })
 }
 
 function maker(json){
+    const reeks_A = [];
+    const reeks_B = [];
+    for(var i = 0; i < json.length; i++){
+        if(i < 9){
+            reeks_A.push(json[i])
+        } else {
+            reeks_B.push(json[i])            
+        }
+    }
+    arrMakeOver(reeks_A, true);
+    arrMakeOver(reeks_B, false);
+    console.log(reeks_A, reeks_B);
+    let first = true;
+}
+
+function arrMakeOver(arr, bool){
+    for(var i = 0; i < arr.length; i++){   
+        if(bool){
+            arr[i].splice(9,1)
+        } 
+        if(i != 0){
+            arr[i][0] = arr[i][0].slice(2);
+            arr[i][i] = 'X'         
+        }
+    }
+    arrInRows(arr);
+}
+
+function arrInRows(arr){
     const div = document.createElement('div');
     div.style.display = 'grid';
-    output.append(div);
-    let first = true;
-    json.forEach(el => {
-        //console.log(el);
-        /*
-        console.log('el', el)
-        const keys = Object.keys(el);
-        div.style.gridTemplateColumns = `repeat (${keys.length}, 1fr)`
-        if(first){
-            first = false;
-            keys.forEach(heading => {
-                const ele = document.createElement('div');
-                ele.textContent = heading.toUpperCase();
-                ele.style.background = 'Black'
-                ele.style.color = 'white'
-                div.append(ele);
-            })
+    div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
+    first = true;
+    arr.forEach(line => {
+        if(line === arr[0]){
+            div.append(makeElement(arrinColumns(line), "header", "row"));
+        } else {
+            div.append(makeElement(arrinColumns(line), "line", "row"));
         }
-        keys.forEach(key => {
-            const ele = document.createElement('div');
-            ele.textContent = el[key];
-            ele.style.border = '1px solid #ddd'
-            div.append(ele);
-        })*/
     })
+    output.append(div);
+}
+
+function arrinColumns(arr){
+    const rowResult = document.createElement('div');
+    for(var i = 0; i < arr.length; i++){
+        switch(i){
+            case 0:
+                rowResult.append(makeElement(arr[i], "element", "naam"))
+                break;
+            case arr.length - 1:
+                rowResult.append(makeElement(arr[i], "element", "result"))
+                break;
+            default:
+                rowResult.append(makeElement(arr[i], "element", "point"))
+        }
+    }
+    return rowResult.innerHTML
+}
+
+function makeElement(text, classA, classB){
+    const ele = document.createElement('div');
+    ele.classList.add(classA)
+    if(classB !== " "){
+        ele.classList.add(classB)
+    }
+    ele.innerHTML = text //.toUpperCase();
+    return ele;
 }
