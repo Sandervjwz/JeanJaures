@@ -135,18 +135,18 @@ function init(){
 }
 
 function maker(json){
-    console.log(json)
+    //console.log(json)
     const reeks_A = [];
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
-        console.log(json[i])
+        //console.log(json[i])
         if(i < 9){
             reeks_A.push(json[i])
         } else {
             reeks_B.push(json[i])            
         }
     }
-    console.log(reeks_A, reeks_B);
+    //console.log(reeks_A, reeks_B);
     arrMakeOver(reeks_A, true);
     arrMakeOver(reeks_B, false);
     console.log(reeks_A, reeks_B);
@@ -196,7 +196,7 @@ function arrInRows(arr){
     div.style.display = 'grid';
     div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
     first = true;
-    console.log(arr, arr[0])
+    //console.log(arr, arr[0])
     arr.forEach(line => {
         if(line === arr[0]){
             div.append(makeElement(arrinColumns(line), "header", "row"));
@@ -226,7 +226,7 @@ function arrinColumns(arr){
                 rowResult.append(makeElement(arr[i], "element", "point"))
         }
     }
-    console.log(rowResult, rowResult.innerHTML);
+    //console.log(rowResult, rowResult.innerHTML);
     return rowResult.innerHTML
 }
 
