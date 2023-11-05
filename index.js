@@ -16,7 +16,7 @@ window.onload = function () {
       menuItems[i].appendChild(att);
       //console.log(menuItems[i].innerText.split(" ")[0], itemMenu[i].href)
    }
-   //MUST remove: maakt automatische resultatenoverzicht
+   /*MUST remove: maakt automatische resultatenoverzicht
    var overzicht = document.getElementsByClassName("overzicht");
    //overzicht[j].nextElementSibling.innerHTML = '';
    for (var j = 0; j < overzicht.length; j++) {
@@ -28,9 +28,13 @@ window.onload = function () {
       }
    }
    //console.log(arr_menuItems, menuItems);
-   /*menuItems.forEach(element => {
+   menuItems.forEach(element => {
       console.log(element)
    });*/
+   for (var i = 0; i < itemMenu.length; i++) {
+      itemMenu[i].hidden = true;
+   }
+   itemMenu[0].hidden = false;
 }
 
 var menuFunction = function () {

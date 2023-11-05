@@ -39,6 +39,24 @@ main {
    margin-top: 2em;
 }
 
+#Home {
+   margin-left: 1em;
+}
+
+#Home h2, #Home h3{
+   margin-top: 0.5em;
+}
+
+ul{
+   margin-left: 1.2em;
+   list-style-type: square;
+}
+
+ol{
+   margin-left: 1.2em;
+   list-style-type: decimal;
+}
+
 img {
    height: 500px;
 }
@@ -88,4 +106,85 @@ img {
 
 footer {
    text-align: center;
+}
+
+/*Clubkamptabel*/
+.table{
+   margin-top: 10px;
+}
+
+.header{
+   color: white;
+   background-color: black;
+}
+
+.header .element{
+   color: white;
+   background-color: black;
+}
+
+.row {
+   display: flex;
+   justify-content: space-between;
+}
+
+.naam {
+   width: 30%;
+}
+
+.point {
+   width: 1.2em;
+   text-align: center;
+}
+
+.result {
+   width: 15%;
+}
+
+/*.element {
+   color: hotpink;
+}*/
+
+/*Interclub*/
+.ICres{
+   margin-top: 10px;
+   display: flex;
+   flex-direction: column;
+}
+
+/*Masters*/
+#Masters .icon{
+   height: 50px;
+}
+
+/*Contact*/
+#Contact{
+   margin-left: 1em;
+}
+
+#Contact h3{
+   margin-top: 0.5em;
+}
+
+#Contact img{
+   width: 300px;
+   height: auto;
+}
+
+#Contact .icon{
+   width: 50px;
+}
+
+/*Nuttige links*/
+#Nuttige{
+   margin-left: 1em;
+}
+
+.linkje{
+   margin: 1em;
+}
+
+.linkje a{
+   text-decoration: none;
+   font-size:x-large;
 }
