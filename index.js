@@ -2,10 +2,12 @@ console.log("ik werk");
 var menuItems = document.getElementsByClassName("menuItem");
 var itemMenu = document.getElementsByClassName("itemMenu")
 var arr_menuItems = [];
+var wedstrijd_index = 0;
 console.log("ik werk",);
 
 window.onload = function () {
    jaar.innerText = new Date().getFullYear();
+   updateVolgende();
    for (var i = 0; i < menuItems.length; i++) {
       arr_menuItems.push(menuItems[i].innerText);
       menuItems[i].classList.add(menuItems[i].innerText.split(" ")[0]);
@@ -48,6 +50,50 @@ var menuFunction = function () {
    }
 }
 
+//automatisch volgende wedstrijd updaten
+function updateVolgende(){
+   var update_link = document.getElementsByClassName("ICres");
+   var match_dagen = ["24/09", "15/10", "22/10", "19/11", "03/12", "28/01", "04/02", "18/02", "10/03", "24/03", "21/04"];
+   var match_numbers = [];
+   match_dagen.forEach(element => {
+      match_numbers.push(DMConverter(element))
+   });
+   var dag = new Date().getDate();
+   var maand = new Date().getMonth(); //"01/01/2024"
+   var vandaag = DMConverter(`${(dag < 10 ? `0${dag}` : dag)}/${(maand + 1 < 10 ? `0${maand + 1}` : maand + 1)}`);
+   console.log(maand, vandaag, match_numbers);
+   for(var i = 0; i < match_numbers.length; i++){
+      if(match_numbers[i] > vandaag){
+         wedstrijd_index = i + 1;
+         console.log(wedstrijd_index, update_link[0].children[2].href, wedstrijd_index);
+         i = match_numbers.length;
+         for(var j = 0; j < update_link.length; j++){
+            var oude_tekst = `${update_link[j].children[2].getAttribute("href")}`;
+            
+            console.log(oude_tekst, oude_tekst_2)
+            //oude_tekst.charAt(oude_tekst.length - 1) = wedstrijd_index
+
+            //update_link[j].children[2].href = wedstrijd_index
+            //var link = update_link[j].children[2].href;
+            //console.log(oude_tekst)
+            //link.charAt(link.length - 1) = wedstrijd_index
+
+         }
+      }
+   }
+}
+
+function DMConverter(string){
+   var arr = string.split("/")
+   var maand = parseInt(arr[1])
+   var end_result = parseInt(arr[0]) + ((maand < 8 ? maand + 12 : maand) * 31)
+   //maand < 10 ? maand + 13 : maand + 1
+   //console.log(parseInt(arr[0]), arr, string, end_result)
+   return end_result
+}
+
 for (var i = 0; i < menuItems.length; i++) {
    menuItems[i].addEventListener('click', menuFunction, false);
 };
+
+

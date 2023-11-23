@@ -34,6 +34,7 @@ function init(){
             data.push(cur_arr);
         })
         maker(data);
+        console.log("data", data);
     })
 }
 
