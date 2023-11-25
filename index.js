@@ -1,9 +1,7 @@
-console.log("ik werk");
 var menuItems = document.getElementsByClassName("menuItem");
 var itemMenu = document.getElementsByClassName("itemMenu")
 var arr_menuItems = [];
 var wedstrijd_index = 0;
-console.log("ik werk",);
 
 window.onload = function () {
    jaar.innerText = new Date().getFullYear();
@@ -61,22 +59,16 @@ function updateVolgende(){
    var dag = new Date().getDate();
    var maand = new Date().getMonth(); //"01/01/2024"
    var vandaag = DMConverter(`${(dag < 10 ? `0${dag}` : dag)}/${(maand + 1 < 10 ? `0${maand + 1}` : maand + 1)}`);
-   console.log(maand, vandaag, match_numbers);
    for(var i = 0; i < match_numbers.length; i++){
       if(match_numbers[i] > vandaag){
          wedstrijd_index = i + 1;
-         console.log(wedstrijd_index, update_link[0].children[2].href, wedstrijd_index);
          i = match_numbers.length;
          for(var j = 0; j < update_link.length; j++){
             var oude_tekst = `${update_link[j].children[2].getAttribute("href")}`;
-            
-            console.log(oude_tekst, oude_tekst_2)
-            //oude_tekst.charAt(oude_tekst.length - 1) = wedstrijd_index
-
-            //update_link[j].children[2].href = wedstrijd_index
-            //var link = update_link[j].children[2].href;
-            //console.log(oude_tekst)
-            //link.charAt(link.length - 1) = wedstrijd_index
+            var oude_tekst_2 = oude_tekst.split('/')
+            oude_tekst_2[6] = wedstrijd_index
+            var nieuwe_tekst = oude_tekst_2.join("/")
+            update_link[j].children[2].setAttribute("href", nieuwe_tekst);
 
          }
       }

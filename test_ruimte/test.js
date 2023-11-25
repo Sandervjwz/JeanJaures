@@ -74,10 +74,10 @@ window.onclick = function (event) {
     }
 }
 
-// https://docs.google.com/spreadsheets/d/1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o/edit#gid=1454454143
-const sheetID = '1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o'
+// https://docs.google.com/spreadsheets/d/1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g/edit#gid=0
+const sheetID = '1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g'
 const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
-const sheetName = '2324_Jean_Jaurès';
+const sheetName = 'DagResultaatCC';
 //let qu = 'select *'
 //const query = encodeURIComponent('select *'); //encodeURIComponent(qu) &tq${query}
 const url = `${base}&sheet=${sheetName}`
@@ -92,7 +92,7 @@ function init(){
     .then(res => res.text())
     .then(rep => {
         //console.log(rep);
-        const jsData = JSON.parse(rep.substring(47).slice(0, -2))
+        const jsData = JSON.parse(rep.substring(47).slice(0, -2));
         console.log(jsData);
         const colz = [];
         jsData.table.cols.forEach(heading => {
@@ -103,13 +103,27 @@ function init(){
             }
         })
         jsData.table.rows.forEach(main => {
+            //console.log(main)
             const row = {};
             cur_arr = []
             for(var i = 0; i < colz.length; i++){
-                cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
+                switch(i){
+                    case 0:
+                        cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
+                        break;
+                    case 3:
+                        cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
+                        break;
+                    case 4:
+                        i = colz.length;
+                        break;
+                    default:
+                        break;                        
+                }-
             }
             data.push(cur_arr);
         })
+        console.log("data", data);
         maker(data);
     })
 }
@@ -119,71 +133,55 @@ function maker(json){
     const reeks_A = [];
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
-        if(i < 9){
-            reeks_A.push(json[i])
-        } else {
-            reeks_B.push(json[i])            
-        }
+        //console.log(json[i])
+        reeks_A.push(json[i][0])
+        reeks_B.push(json[i][1])
     }
-    arrMakeOver(reeks_A, true);
-    arrMakeOver(reeks_B, false);
+    arrMakeOver(reeks_A);
+    //arrMakeOver(reeks_B, false);
     console.log(reeks_A, reeks_B);
 }
 
-function arrMakeOver(arr, bool){
-    //console.log("make over");
-    for(var i = 0; i < arr.length; i++){   
-        if(bool){
-            arr[i].splice(9,1)
-        } 
-        if(i != 0){
-            arr[i][0] = arr[i][0].slice(2);
-            arr[i][0] = `${i}) ${arr[i][0]}`
-            arr[i][i] = 'X'         
-        }
-    }
-    arrInRows(arr);
-}
-
-function arrInRows(arr){
-    const div = document.createElement('div');
-    div.style.display = 'grid';
-    div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
-    first = true;
-    arr.forEach(line => {
-        if(line === arr[0]){
-            div.append(makeElement(arrinColumns(line), "header", "row"));
-        } else {
-            div.append(makeElement(arrinColumns(line), "line", "row"));
-        }
-    })
-    output.append(div);
-}
-
-function arrinColumns(arr){
-    //console.log("arr in rows");
-    const rowResult = document.createElement('div');
+function arrMakeOver(arr){
+    var result = [];
+    var speeldagen = [];
+    var currentSubarray = [];
     for(var i = 0; i < arr.length; i++){
-        switch(i){
-            case 0:
-                rowResult.append(makeElement(arr[i], "element", "naam"))
-                break;
-            case arr.length - 1:
-                rowResult.append(makeElement(arr[i], "element", "result"))
-                break;
-            default:
-                rowResult.append(makeElement(arr[i], "element", "point"))
+        console.log("make over", arr[i], arr[i].substring(0, 7));
+        if(arr[i].substring(0, 7) == 'A-reeks'){
+            if (currentSubarray.length > 0) {
+                result.push(currentSubarray);
+            }
+            currentSubarray = [];
+            speeldagen.push(arr[i].substring(8, 13));
+            //console.log()
+        } else {
+            if(arr[i] !== ""){
+                currentSubarray.push(arr[i])
+            }
         }
     }
-    return rowResult.innerHTML
+    result.reverse();
+    speeldagen.reverse();
+    console.log("result", result, speeldagen);
+    const speeldagen_html = document.createElement('div');
+    speeldagen_html.classList.add('speeldagen')
+    for(var i = 0; i < result.length; i++){
+        if(i == 0){
+            speeldagen_html.append(makeElement(result[i], "speeldag", speeldagen[i], result.length - i, "volgende"))
+        }
+        speeldagen_html.append(makeElement(result[i], "speeldag", speeldagen[i], result.length - i, " "))        
+    }
+    output.append(speeldagen_html);
 }
 
-function makeElement(text, classA, classB){
+function makeElement(text, classA, speeldag, hoeveelste, classB){
     const ele = document.createElement('div');
     ele.classList.add(classA)
     if(classB !== " "){
         ele.classList.add(classB)
     }
-    ele.innerHTML = text //.toUpperCase();
+    console.log("text", text)
+    ele.innerHTML = `<h4>Speeldag ${hoeveelste} ${speeldag}</h4><p>${text.join("</p><p>")}</p>` //.toUpperCase();
     return ele;
 }

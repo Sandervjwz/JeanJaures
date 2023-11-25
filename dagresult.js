@@ -1,7 +1,7 @@
-// https://docs.google.com/spreadsheets/d/1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o/edit#gid=1454454143
-const sheetID = '1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o'
+// https://docs.google.com/spreadsheets/d/1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g/edit#gid=0
+const sheetID = '1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g'
 const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
-const sheetName = '2324_Jean_Jaurès';
+const sheetName = 'DagResultaatCC';
 //let qu = 'select *'
 //const query = encodeURIComponent('select *'); //encodeURIComponent(qu) &tq${query}
 const url = `${base}&sheet=${sheetName}`
@@ -16,7 +16,7 @@ function init(){
     .then(rep => {
         //console.log(rep);
         const jsData = JSON.parse(rep.substring(47).slice(0, -2))
-        //console.log(jsData);
+        console.log(jsData);
         const colz = [];
         jsData.table.cols.forEach(heading => {
             if(heading.label != null){
