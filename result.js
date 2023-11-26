@@ -34,14 +34,12 @@ function init(){
             data.push(cur_arr);
         })
         maker(data);
-        //console.log("data", data);
     })
     var event = new Event('initDone');
     document.dispatchEvent(event);
 }
 
 function maker(json){
-    //console.log("maker");
     const reeks_A = [];
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
@@ -53,11 +51,10 @@ function maker(json){
     }
     arrMakeOver(reeks_A, "A-reeks");
     arrMakeOver(reeks_B, "B-reeks");
-    //console.log(reeks_A, reeks_B);
 }
 
 function arrMakeOver(arr, reeks){
-    //console.log("make over");
+    arr[0][0] = ''
     for(var i = 0; i < arr.length; i++){   
         if(reeks == 'A-reeks'){
             arr[i].splice(9,1)
@@ -74,6 +71,8 @@ function arrMakeOver(arr, reeks){
 function arrInRows(arr, reeks){
     const divReeks = document.createElement('div');
     divReeks.id = reeks;
+    const reekstitel = document.createElement('h2')
+    reekstitel.innerHTML = reeks
     divReeks.classList.add('reeks');
     const div2 = document.createElement('div');
     div2.classList.add('tableVolgende');
@@ -90,12 +89,12 @@ function arrInRows(arr, reeks){
         }
     })
     div2.append(div);
-    divReeks.append(div2);
+    divReeks.append(div2);    
+    output.append(reekstitel)
     output.append(divReeks);
 }
 
 function arrinColumns(arr){
-    //console.log("arr in rows", arr);
     const rowResult = document.createElement('div');
     for(var i = 0; i < arr.length; i++){
         if(arr[i] == '0.5'){
@@ -121,6 +120,6 @@ function makeElement(text, classA, classB){
     if(classB !== " "){
         ele.classList.add(classB)
     }
-    ele.innerHTML = text //.toUpperCase();
+    ele.innerHTML = text;
     return ele;
 }
