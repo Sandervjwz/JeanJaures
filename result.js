@@ -36,6 +36,8 @@ function init(){
         maker(data);
         //console.log("data", data);
     })
+    var event = new Event('initDone');
+    document.dispatchEvent(event);
 }
 
 function maker(json){
@@ -49,15 +51,15 @@ function maker(json){
             reeks_B.push(json[i])            
         }
     }
-    arrMakeOver(reeks_A, true);
-    arrMakeOver(reeks_B, false);
+    arrMakeOver(reeks_A, "A-reeks");
+    arrMakeOver(reeks_B, "B-reeks");
     //console.log(reeks_A, reeks_B);
 }
 
-function arrMakeOver(arr, bool){
+function arrMakeOver(arr, reeks){
     //console.log("make over");
     for(var i = 0; i < arr.length; i++){   
-        if(bool){
+        if(reeks == 'A-reeks'){
             arr[i].splice(9,1)
         } 
         if(i != 0){
@@ -66,13 +68,18 @@ function arrMakeOver(arr, bool){
             arr[i][i] = 'X'         
         }
     }
-    arrInRows(arr);
+    arrInRows(arr, reeks);
 }
 
-function arrInRows(arr){
+function arrInRows(arr, reeks){
+    const divReeks = document.createElement('div');
+    divReeks.id = reeks;
+    divReeks.classList.add('reeks');
+    const div2 = document.createElement('div');
+    div2.classList.add('tableVolgende');
     const div = document.createElement('div');
     div.style.display = 'grid';
-    div.classList.add("table")
+    div.classList.add("table");
     div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
     first = true;
     arr.forEach(line => {
@@ -82,11 +89,13 @@ function arrInRows(arr){
             div.append(makeElement(arrinColumns(line), "line", "row"));
         }
     })
-    output.append(div);
+    div2.append(div);
+    divReeks.append(div2);
+    output.append(divReeks);
 }
 
 function arrinColumns(arr){
-    console.log("arr in rows", arr);
+    //console.log("arr in rows", arr);
     const rowResult = document.createElement('div');
     for(var i = 0; i < arr.length; i++){
         if(arr[i] == '0.5'){

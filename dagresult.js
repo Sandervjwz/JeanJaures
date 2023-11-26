@@ -1,22 +1,23 @@
 // https://docs.google.com/spreadsheets/d/1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g/edit#gid=0
-const sheetID = '1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g'
-const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
-const sheetName = 'DagResultaatCC';
+const sheetID_ = '1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g'
+const base_ = `https://docs.google.com/spreadsheets/d/${sheetID_}/gviz/tq?`
+const sheetName_ = 'DagResultaatCC';
 //let qu = 'select *'
 //const query = encodeURIComponent('select *'); //encodeURIComponent(qu) &tq${query}
-const url = `${base}&sheet=${sheetName}`
-const data = [];
-document.addEventListener("DOMContentLoaded", init);
-const output = document.getElementById("Clubkampioenschap")
+const url_ = `${base_}&sheet=${sheetName_}`
+const data_ = [];
+document.addEventListener("initDone", init2);
 
-function init(){
+//const output = document.querySelector(".output")
+
+function init2(){
     //console.log(url, "wekrt");
-    fetch(url)
+    fetch(url_)
     .then(res => res.text())
     .then(rep => {
         //console.log(rep);
-        const jsData = JSON.parse(rep.substring(47).slice(0, -2))
-        console.log(jsData);
+        const jsData = JSON.parse(rep.substring(47).slice(0, -2));
+        //console.log(jsData);
         const colz = [];
         jsData.table.cols.forEach(heading => {
             if(heading.label != null){
@@ -26,92 +27,150 @@ function init(){
             }
         })
         jsData.table.rows.forEach(main => {
-            const row = {};
+            //console.log(main)
+            //const row = {};
             cur_arr = []
             for(var i = 0; i < colz.length; i++){
-                cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
+                switch(i){
+                    case 0:
+                        cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
+                        break;
+                    case 3:
+                        cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
+                        break;
+                    case 4:
+                        i = colz.length;
+                        break;
+                    default:
+                        break;                        
+                }
             }
-            data.push(cur_arr);
+            data_.push(cur_arr);
         })
-        maker(data);
-        //console.log("data", data);
+        //console.log("data", data_);
+        maker2(data_);
     })
 }
 
-function maker(json){
+function maker2(json){
     //console.log("maker");
     const reeks_A = [];
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
-        if(i < 9){
-            reeks_A.push(json[i])
-        } else {
-            reeks_B.push(json[i])            
-        }
+        //console.log(json[i])
+        reeks_A.push(json[i][0])
+        reeks_B.push(json[i][1])
     }
-    arrMakeOver(reeks_A, true);
-    arrMakeOver(reeks_B, false);
+    arrMakeOver2(reeks_A);
+    arrMakeOver2(reeks_B);
+    volgendeMover();
     //console.log(reeks_A, reeks_B);
 }
 
-function arrMakeOver(arr, bool){
-    //console.log("make over");
-    for(var i = 0; i < arr.length; i++){   
-        if(bool){
-            arr[i].splice(9,1)
-        } 
-        if(i != 0){
-            arr[i][0] = arr[i][0].slice(2);
-            arr[i][0] = `${i}) ${arr[i][0]}`
-            arr[i][i] = 'X'         
-        }
-    }
-    arrInRows(arr);
-}
-
-function arrInRows(arr){
-    const div = document.createElement('div');
-    div.style.display = 'grid';
-    div.classList.add("table")
-    div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
-    first = true;
-    arr.forEach(line => {
-        if(line === arr[0]){
-            div.append(makeElement(arrinColumns(line), "header", "row"));
-        } else {
-            div.append(makeElement(arrinColumns(line), "line", "row"));
-        }
-    })
-    output.append(div);
-}
-
-function arrinColumns(arr){
-    console.log("arr in rows", arr);
-    const rowResult = document.createElement('div');
+function arrMakeOver2(arr){
+    var result = [];
+    var speeldagen = [];
+    var currentSubarray = [];
+    var reekschecker = arr[0].substring(0, 7);
+    var reeks_HTML = waitForElement(reekschecker);
+    //console.log(reeks_HTML)
     for(var i = 0; i < arr.length; i++){
-        if(arr[i] == '0.5'){
-            arr[i] = '&frac12;'
-        }
-        switch(i){
-            case 0:
-                rowResult.append(makeElement(arr[i], "element", "naam"))
-                break;
-            case arr.length - 1:
-                rowResult.append(makeElement(arr[i], "element", "result"))
-                break;
-            default:
-                rowResult.append(makeElement(arr[i], "element", "point"))
+        //console.log("make over", arr[i], arr[i].substring(0, 7), reekschecker);
+        if(arr[i].substring(0, 7) == reekschecker){
+            if (currentSubarray.length > 0) {
+                result.push(currentSubarray);
+            }
+            currentSubarray = [];
+            //console.log(arr[i], "test", arr[i].substring(8, 13).trim(), "zonder", arr[i].substring(8, 13))
+            speeldagen.push(arr[i].substring(8, 13).trim());
+        } else {
+            if(arr[i] !== ""){
+                currentSubarray.push(arr[i])
+            }
         }
     }
-    return rowResult.innerHTML
+    result.reverse();
+    speeldagen.reverse().shift();
+    //console.log("result", result, speeldagen);
+    const speeldagen_html = document.createElement('div');
+    speeldagen_html.classList.add('speeldagen')
+    for(var i = 0; i < result.length; i++){
+        if(i == 0){
+            speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, "volgende", `${reekschecker}: volgende`))
+        } else {
+            speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, " ", `${reekschecker}:`))              
+        }      
+    }
+    reeks_HTML.append(speeldagen_html);
 }
 
-function makeElement(text, classA, classB){
+function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
     const ele = document.createElement('div');
     ele.classList.add(classA)
+    //ele.hidden = false
     if(classB !== " "){
         ele.classList.add(classB)
     }
-    ele.innerHTML = text //.toUpperCase();
+    //console.log("text", text)
+    ele.innerHTML = `<h4>${reeks} speeldag ${hoeveelste} ${speeldag}</h4><p>${text.join("</p><p>")}</p>` //.toUpperCase();
     return ele;
+}
+
+function waitForElement(reeks) {
+    var element = document.getElementById(reeks);
+    while (element === null) {
+        setTimeout(() => {
+            element = document.getElementById(reeks);
+        }, 1000);
+    }
+    return element
+}
+
+function volgendeMover(){
+    var getReeks = document.getElementsByClassName('reeks');
+    //console.log(getReeks, getReeks.length);
+    for(var i = 0; i < getReeks.length; i++){
+        var element = getReeks[i].childNodes[1].childNodes[0];
+        getReeks[i].childNodes[1].removeChild(element)
+        getReeks[i].childNodes[0].innerHTML += element.outerHTML;        
+        //console.log(getReeks[i].childNodes[1].childNodes.length);    
+        if(getReeks[i].childNodes[1].childNodes.length > 5){
+            meerMinderKnopAdd(getReeks[i].childNodes[1]);
+        }
+    }
+}
+
+function meerMinderKnopAdd(reeks){
+    const ele = document.createElement('a');
+    ele.innerText = 'meer'
+    ele.onclick = function(){
+        meerMinderKnop(this)
+    };
+    ele.classList.add('meerMinderKnop');
+    ele.classList.add('meer');
+    //console.log(reeks, ele);
+    reeks.append(ele)
+    meerMinderKnop(ele);
+}
+
+function meerMinderKnop(knop){
+    var speeldagen = Array.from(knop.parentElement.getElementsByClassName("speeldag"))
+    console.log("ik werk", knop, speeldagen)
+    if(knop.classList.contains("meer")){
+        for(var i = 0; i < speeldagen.length; i++){
+            if(i > 2){
+                speeldagen[i].hidden = true
+            }
+        }
+        knop.classList.remove("meer");
+        knop.innerText = 'meer';
+    } else {
+        for(var i = 0; i < speeldagen.length; i++){
+            if(i > 2){
+                speeldagen[i].hidden = false
+            }
+        }
+        knop.classList.add("meer");
+        knop.innerText = 'minder';
+    }
 }

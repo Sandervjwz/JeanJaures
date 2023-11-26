@@ -104,7 +104,7 @@ function init(){
         })
         jsData.table.rows.forEach(main => {
             //console.log(main)
-            const row = {};
+            //const row = {};
             cur_arr = []
             for(var i = 0; i < colz.length; i++){
                 switch(i){
@@ -119,7 +119,7 @@ function init(){
                         break;
                     default:
                         break;                        
-                }-
+                }
             }
             data.push(cur_arr);
         })
@@ -138,22 +138,26 @@ function maker(json){
         reeks_B.push(json[i][1])
     }
     arrMakeOver(reeks_A);
-    //arrMakeOver(reeks_B, false);
-    console.log(reeks_A, reeks_B);
+    arrMakeOver(reeks_B);
+    //console.log(reeks_A, reeks_B);
 }
 
 function arrMakeOver(arr){
     var result = [];
     var speeldagen = [];
     var currentSubarray = [];
+    var reekschecker = arr[0].substring(0, 7);
+    var reeks_HTML = document.getElementById(reekschecker);
+    console.log(reeks_HTML)
     for(var i = 0; i < arr.length; i++){
-        console.log("make over", arr[i], arr[i].substring(0, 7));
-        if(arr[i].substring(0, 7) == 'A-reeks'){
+        //console.log("make over", arr[i], arr[i].substring(0, 7));
+        if(arr[i].substring(0, 7) == reekschecker){
             if (currentSubarray.length > 0) {
                 result.push(currentSubarray);
             }
             currentSubarray = [];
-            speeldagen.push(arr[i].substring(8, 13));
+            //console.log(arr[i], "test", arr[i].substring(8, 13).trim(), "zonder", arr[i].substring(8, 13))
+            speeldagen.push(arr[i].substring(8, 13).trim());
             //console.log()
         } else {
             if(arr[i] !== ""){
@@ -162,26 +166,27 @@ function arrMakeOver(arr){
         }
     }
     result.reverse();
-    speeldagen.reverse();
-    console.log("result", result, speeldagen);
+    speeldagen.reverse().shift();
+    //console.log("result", result, speeldagen);
     const speeldagen_html = document.createElement('div');
     speeldagen_html.classList.add('speeldagen')
     for(var i = 0; i < result.length; i++){
         if(i == 0){
-            speeldagen_html.append(makeElement(result[i], "speeldag", speeldagen[i], result.length - i, "volgende"))
-        }
-        speeldagen_html.append(makeElement(result[i], "speeldag", speeldagen[i], result.length - i, " "))        
+            speeldagen_html.append(makeElement(result[i], "speeldag", speeldagen[i], result.length - i, "volgende", `${reekschecker} Volgende`))
+        } else {
+            speeldagen_html.append(makeElement(result[i], "speeldag", speeldagen[i], result.length - i, " ", reekschecker))              
+        }      
     }
     output.append(speeldagen_html);
 }
 
-function makeElement(text, classA, speeldag, hoeveelste, classB){
+function makeElement(text, classA, speeldag, hoeveelste, classB, reeks){
     const ele = document.createElement('div');
     ele.classList.add(classA)
     if(classB !== " "){
         ele.classList.add(classB)
     }
-    console.log("text", text)
-    ele.innerHTML = `<h4>Speeldag ${hoeveelste} ${speeldag}</h4><p>${text.join("</p><p>")}</p>` //.toUpperCase();
+    //console.log("text", text)
+    ele.innerHTML = `<h4>${reeks} speeldag ${hoeveelste} ${speeldag}</h4><p>${text.join("</p><p>")}</p>` //.toUpperCase();
     return ele;
 }
