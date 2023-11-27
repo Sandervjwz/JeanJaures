@@ -95,7 +95,7 @@ function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
     if(classB !== " "){
         ele.classList.add(classB)
     }
-    ele.innerHTML = `<h4>${reeks} speeldag ${hoeveelste} ${speeldag}</h4><p>${text.join("</p><p>")}</p>`
+    ele.innerHTML = `<h4>${reeks} speeldag ${hoeveelste} (${speeldag})</h4><p>${text.join("</p><p>")}</p>`
     return ele;
 }
 
