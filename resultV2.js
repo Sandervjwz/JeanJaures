@@ -1,27 +1,18 @@
-// https://docs.google.com/spreadsheets/d/1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o/edit#gid=0
-const sheetID = '1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o'
+// https://docs.google.com/spreadsheets/d/12pejFXzogBFjWxH0qodEhfLl6eWxAVf2B23BEaoRYKQ/edit#gid=0
+const sheetID = '12pejFXzogBFjWxH0qodEhfLl6eWxAVf2B23BEaoRYKQ'
 const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
-const sheetName = '2324_Jean_Jaures';
+const sheetName = 'ResultSheet';
 //let qu = 'select *'
 //const query = encodeURIComponent('select *'); //encodeURIComponent(qu) &tq${query}
 const url = `${base}&sheet=${sheetName}`
 const data = [];
-document.addEventListener("loadDone", init);
+const data_ = [];
+document.addEventListener("DOMContentLoaded", init);
 const output = document.getElementById("Clubkampioenschap")
 
-function init(retryCount = 3){
+function init(){
     //console.log(url, "wekrt");
     fetch(url)
-    .catch(error => {
-        console.error("Fetch error:", error);
-        if (retryCount > 0) {
-            // Retry with a reduced retry count
-            init(retryCount - 1);
-        } else {
-            // Handle the error condition after maximum retries
-            console.error("Max retries reached. Unable to fetch data.");
-        }
-    })
     .then(res => res.text())
     .then(rep => {
         //console.log(rep);
@@ -35,18 +26,41 @@ function init(retryCount = 3){
                 } 
             }
         })
+        var j = 0;
         jsData.table.rows.forEach(main => {
-            const row = {};
-            cur_arr = []
-            for(var i = 0; i < colz.length; i++){
-                cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
+            if(j < 19){
+                const row = {};
+                cur_arr = []
+                for(var i = 0; i < colz.length; i++){
+                    cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
+                }
+                data.push(cur_arr);  
+                j ++              
+            } else {
+                cur_arr = []
+                for(var i = 0; i < colz.length; i++){
+                    switch(i){
+                        case 0:
+                            cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
+                            break;
+                        case 3:
+                            cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
+                            break;
+                        case 4:
+                            i = colz.length;
+                            break;
+                        default:
+                            break;                        
+                    }
+                }
+                data_.push(cur_arr);
             }
-            data.push(cur_arr);
         })
+        console.log("data", data);
+        console.log("data_", data_);
         maker(data);
+        maker2(data_);
     })
-    var event = new Event('initDone');
-    document.dispatchEvent(event);
 }
 
 function maker(json){
@@ -132,52 +146,6 @@ function makeElement(text, classA, classB){
     }
     ele.innerHTML = text;
     return ele;
-}
-
-// https://docs.google.com/spreadsheets/d/1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g/edit#gid=0
-const sheetID_ = '1bzNwfuNE9HUIAMSa-JBz_1M9K9XFXwGMr84TFDpDY-g'
-const base_ = `https://docs.google.com/spreadsheets/d/${sheetID_}/gviz/tq?`
-const sheetName_ = 'DagResultaatCC';
-//let qu = 'select *'
-//const query = encodeURIComponent('select *'); //encodeURIComponent(qu) &tq${query}
-const url_ = `${base_}&sheet=${sheetName_}`
-const data_ = [];
-document.addEventListener("initDone", init2);
-
-function init2(){
-    fetch(url_)
-    .then(res => res.text())
-    .then(rep => {
-        const jsData = JSON.parse(rep.substring(47).slice(0, -2));
-        const colz = [];
-        jsData.table.cols.forEach(heading => {
-            if(heading.label != null){
-                if (heading.id.charCodeAt(0) < 76){
-                    colz.push(heading.label.toLowerCase().replace(/\s/g, ''));
-                } 
-            }
-        })
-        jsData.table.rows.forEach(main => {
-            cur_arr = []
-            for(var i = 0; i < colz.length; i++){
-                switch(i){
-                    case 0:
-                        cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
-                        break;
-                    case 3:
-                        cur_arr.push((main.c[i] != null) ? main.c[i].v : '');
-                        break;
-                    case 4:
-                        i = colz.length;
-                        break;
-                    default:
-                        break;                        
-                }
-            }
-            data_.push(cur_arr);
-        })
-        maker2(data_);
-    })
 }
 
 function maker2(json){
