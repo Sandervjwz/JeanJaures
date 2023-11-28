@@ -260,3 +260,12 @@ footer {
       color:hotpink;
    }
 }
+
+@media (max-width: 500px) {
+   /*Clubkamptabel*/
+   .speeldag{
+      width: 100%;
+      margin: 5px;
+      padding: 5px;
+   }
+}
