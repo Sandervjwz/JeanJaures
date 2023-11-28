@@ -35,16 +35,6 @@ function init(retryCount = 3){
         })
         maker(data);
     })
-    .catch(error => {
-        console.error("Fetch error:", error);
-        if (retryCount > 0) {
-            // Retry with a reduced retry count
-            init(retryCount - 1);
-        } else {
-            // Handle the error condition after maximum retries
-            console.error("Max retries reached. Unable to fetch data.");
-        }
-    });
     var event = new Event('initDone');
     document.dispatchEvent(event);
 }
