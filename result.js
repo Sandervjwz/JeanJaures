@@ -1,15 +1,15 @@
-// https://docs.google.com/spreadsheets/d/1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o/edit#gid=1454454143
+// https://docs.google.com/spreadsheets/d/1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o/edit#gid=0
 const sheetID = '1WigEkjbs9IqhgCRG3Vl7HOzRQ4IRtsznDuafR9IWi2o'
 const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
-const sheetName = '2324_Jean_Jaurès';
+const sheetName = '2324_Jean_Jaures';
 //let qu = 'select *'
 //const query = encodeURIComponent('select *'); //encodeURIComponent(qu) &tq${query}
 const url = `${base}&sheet=${sheetName}`
 const data = [];
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("loadDone", init);
 const output = document.getElementById("Clubkampioenschap")
 
-function init(){
+function init(retryCount = 3){
     //console.log(url, "wekrt");
     fetch(url)
     .then(res => res.text())

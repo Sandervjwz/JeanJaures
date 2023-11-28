@@ -35,6 +35,8 @@ window.onload = function () {
       itemMenu[i].hidden = true;
    }
    itemMenu[0].hidden = false;
+   var event = new Event('loadDone');
+   document.dispatchEvent(event);
 }
 
 var menuFunction = function () {
