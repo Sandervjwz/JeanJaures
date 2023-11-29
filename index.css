@@ -266,6 +266,23 @@ footer {
 }
 
 @media (max-width: 500px) {
+   .menuItem {
+      display: none;
+   }
+
+   .hamburger-menu {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+  }
+  
+  .bar {
+      width: 30px;
+      height: 3px;
+      background-color: var(--secondary);
+      margin: 6px 0;
+  }
+
    /*Clubkamptabel*/
    .speeldag{
       width: 100%;

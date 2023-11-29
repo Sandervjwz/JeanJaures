@@ -121,9 +121,16 @@ function arrInRows(arr, reeks){
 function arrinColumns(arr){
     const rowResult = document.createElement('div');
     for(var i = 0; i < arr.length; i++){
-        if(arr[i] == '0.5'){
+        var bool = false;
+        //console.log(arr[i], typeof arr[i], (typeof arr[i] === 'string' && arr[i].includes(",5"))) //.includes("/"), arr[i].includes(",")
+        if(arr[i] == '0,5' || arr[i] == '0.5'){
             arr[i] = '&frac12;'
-        }
+            bool = true;
+        } 
+        /*else if (typeof arr[i] === 'string' && arr[i].includes(",5") && bool == false) {
+            arr[i] = arr[i].replace(/,5/g, '&frac12;/')
+            //console.log(arr[i])
+        }*/
         switch(i){
             case 0:
                 rowResult.append(makeElement(arr[i], "element", "naam"))
