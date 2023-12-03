@@ -62,7 +62,7 @@ function updateVolgende(){
    var maand = new Date().getMonth(); //"01/01/2024"
    var vandaag = DMConverter(`${(dag < 10 ? `0${dag}` : dag)}/${(maand + 1 < 10 ? `0${maand + 1}` : maand + 1)}`);
    for(var i = 0; i < match_numbers.length; i++){
-      if(match_numbers[i] > vandaag){
+      if(match_numbers[i] >= vandaag){
          wedstrijd_index = i + 1;
          i = match_numbers.length;
          for(var j = 0; j < update_link.length; j++){

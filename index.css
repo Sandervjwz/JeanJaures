@@ -266,9 +266,9 @@ footer {
 }
 
 @media (max-width: 500px) {
-   .menuItem {
+   /*.menuItem {
       display: none;
-   }
+   }*/
 
    .hamburger-menu {
       display: flex;
