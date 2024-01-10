@@ -22,6 +22,7 @@ function init(){
         jsData.table.cols.forEach(heading => {
             if(heading.label != null){
                 if (heading.id.charCodeAt(0) < 76){
+                    //console.log(heading.id.charCodeAt(0), heading.id)
                     colz.push(heading.label.toLowerCase().replace(/\s/g, ''));
                 } 
             }
@@ -29,7 +30,7 @@ function init(){
         var j = 0;
         jsData.table.rows.forEach(main => {
             if(j < 19){
-                const row = {};
+                //const row = {};
                 cur_arr = []
                 for(var i = 0; i < colz.length; i++){
                     cur_arr.push((main.c[i] != null) ? main.c[i].v : '-');
@@ -56,8 +57,8 @@ function init(){
                 data_.push(cur_arr);
             }
         })
-        console.log("data", data);
-        console.log("data_", data_);
+        //console.log("data", data);
+        //console.log("data_", data_);
         maker(data);
         maker2(data_);
     })
@@ -82,6 +83,13 @@ function arrMakeOver(arr, reeks){
     for(var i = 0; i < arr.length; i++){   
         if(reeks == 'A-reeks'){
             arr[i].splice(9,1)
+        }  
+        if(reeks == 'B-reeks'){
+            if(arr[9][i] == '-'){
+                arr[9][i] = 'F0'
+            } if (arr[i][9] == '-'){
+                arr[i][9] = 'F1'
+            }
         } 
         if(i != 0){
             arr[i][0] = arr[i][0].slice(2);
@@ -162,6 +170,7 @@ function maker2(json){
         reeks_A.push(json[i][0])
         reeks_B.push(json[i][1])
     }
+    //console.log("json", json, "reeks A", reeks_A, "reeks B", reeks_B)
     arrMakeOver2(reeks_A);
     arrMakeOver2(reeks_B);
     volgendeMover();
@@ -186,6 +195,7 @@ function arrMakeOver2(arr){
             }
         }
     }
+    maakTabel(result);
     result.reverse();
     speeldagen.reverse().shift();
     const speeldagen_html = document.createElement('div');
@@ -198,6 +208,36 @@ function arrMakeOver2(arr){
         }      
     }
     reeks_HTML.append(speeldagen_html);
+}
+
+function maakTabel(resultArr){
+    resultArr.pop()
+    rankingArr = [];
+    for(var i = 0; i < resultArr.length; i++){
+        //resultArr[i]
+        resultArr[i].forEach(line =>{
+            if(line == "Geen matchen gespeeld"){
+                //console.log(line.split(" : ")[0].split(" - ")[0])
+                i++
+            } else {
+                //console.log(line.split(" : ")[0].split(" - ")[0])
+                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[0], line.split(" : ")[1].split(" - ")[0], true))            ;
+                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false));
+            }
+        })
+    }
+    console.log(rankingArr)    
+}
+
+function createPlayerRecord(naam, score, bool){
+    //&frac12;
+    var record = {
+        Naam: naam.toLowerCase(),
+        Score: (score == "½" || score == "1/2"? "0,5" : score),
+        Wit: bool
+    };
+    //console.log(record)
+    return record
 }
 
 function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){

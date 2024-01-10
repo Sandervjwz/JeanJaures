@@ -47,6 +47,11 @@ main {
    margin-top: 0.5em;
 }
 
+
+.hamburger-menu {
+   display: none;
+}
+
 ul{
    margin-left: 1.2em;
    list-style-type: square;
@@ -266,21 +271,25 @@ footer {
 }
 
 @media (max-width: 500px) {
-   /*.menuItem {
+   .menuItem {
       display: none;
-   }*/
+   }
+
+   header {
+      display: flex;
+      justify-content: left;
+      margin: 3px;
+   }
 
    .hamburger-menu {
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-  }
-  
-  .bar {
       width: 30px;
       height: 3px;
-      background-color: var(--secondary);
-      margin: 6px 0;
+      display: flex;
+      justify-self: right;
+      flex-direction: column;
+      cursor: pointer;
+      margin: 3px 15px;
+      transition: 0.4s;
   }
 
    /*Clubkamptabel*/
