@@ -45,6 +45,7 @@
 .row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .naam {
@@ -60,6 +61,29 @@
     width: 15%;
 }
 
+.subresult {
+    display: flex;
+    justify-content: space-between;
+}
+
+.subplayer {
+    width: 45%;
+}
+
+.white, .black{
+    border: 1px solid black;
+}
+
+.white {
+    background-color: white;
+    color: white;
+}
+
+.black {
+    background-color: black;
+    color: black;
+
+}
 /*.element {
     color: hotpink;
 }*/
