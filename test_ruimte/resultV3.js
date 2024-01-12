@@ -237,28 +237,36 @@ function maakTabel(resultArr){
             }
         })
     }
-    console.log(rankingArr)    
+    rankingArr.sort((a, b) => a.Naamnr - b.Naamnr)
+    //console.log(rankingArr)   
+    maker3(rankingArr) 
 }
 
 function createPlayerRecord(naam, score, bool, tegenstander){
     //&frac12;
-    rankernr();
+    //rankernr();
     var record = {
-        Naam: naam.toLowerCase(),
-        Naamnr: rankernr(naam.toLowerCase()),
-        Score: (score == "½" || score == "1/2"? "0,5" : score),
+        Naamnr: rankernr(naam.toLowerCase()).returnnr,
+        Naam: naam,
+        Score: Number(score == "½" || score == "1/2"? "0.5" : score),
         Wit: bool,
-        Tegenstander: tegenstander
-        ,Tegenstandernr: rankernr(tegenstander.toLowerCase())
+        Tegenstandernr: rankernr(tegenstander.toLowerCase()).returnnr,
+        Tegenstander: tegenstander,
+        Reeks: rankernr(naam.toLowerCase()).reeks,
+        ReeksAantal: rankernr(naam.toLowerCase()).reeksAantal
     };
-    console.log(naam.toLowerCase(), tegenstander.toLowerCase())
+    //console.log(rankernr(naam.toLowerCase()), rankernr(naam.toLowerCase()).returnnr )
     return record
 }
 
 function rankernr(naam){
+    //console.log("naam", naam)
     rankings = [];
     rankingA = [];
     rankingB = [];
+    var returnnr;
+    var reeks;
+    var reeksAantal;
     for(var i = 0; i < reeksranking.length; i++){
         if(i < 8){
             rankingA.push(reeksranking[i].toLowerCase())
@@ -267,14 +275,27 @@ function rankernr(naam){
         }
     }
     rankings.push(rankingA, rankingB)
-    rankings.forEach(ranking => {
+    rankings.forEach((ranking, index) => {
         for(var i = 0; i < ranking.length; i++){
-            console.log(ranking[i], "ba", naam, i)
             if(ranking[i] === naam){
-                return `${i + 1}`
-            }
+                returnnr = i + 1;
+                reeksAantal = ranking.length
+                reeks = (index == 0 ? "A" : "B")
+                //console.log(ranking[i], "ba", naam, returnnr)
+            } 
         }
+        (returnnr === undefined ? returnnr = "euh foutje" : null)
     })
+    return {returnnr, reeks, reeksAantal}
+}
+
+function maker3(Arr){
+    for(var i = 0; i < Arr.length; i++){
+        if(Arr[i].Naamnr === 1){
+            console.log(Arr[i])
+        }
+    }
+    //console.log(Arr[0])
 }
 
 function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
