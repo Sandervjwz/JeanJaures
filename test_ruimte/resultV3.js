@@ -70,13 +70,155 @@ function maker(json){
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
         if(i < 9){
+            (i != 0 ? reeksranking.push(json[i][0].slice(2)) : null)
             reeks_A.push(json[i])
         } else {
+            (i != 9 ? reeksranking.push(json[i][0].slice(2)) : null)
             reeks_B.push(json[i])            
         }
     }
+    //console.log(reeksranking)
     arrMakeOver(reeks_A, "A-reeks");
     arrMakeOver(reeks_B, "B-reeks");
+}
+
+function maakTabel(resultArr){
+    resultArr.pop()
+    rankingArr = [];
+    for(var i = 0; i < resultArr.length; i++){
+        resultArr[i].forEach(line =>{
+            if(line == "Geen matchen gespeeld"){
+                i++
+            } else {
+                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[0], line.split(" : ")[1].split(" - ")[0], true, line.split(" : ")[0].split(" - ")[1]))            ;
+                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false, line.split(" : ")[0].split(" - ")[0]));
+            }
+        })
+        //rankingArr.push(null, null, true, line.split(" : ")[0].split(" - ")[1])  
+    }
+    rankingArr.sort((a, b) => a.Naamnr - b.Naamnr)
+    //console.log(rankingArr)   
+    maker3(rankingArr) 
+}
+
+function createPlayerRecord(naam, score, bool, tegenstander){
+    //&frac12;
+    //rankernr();
+    var record = {
+        Naamnr: rankernr(naam.toLowerCase()).returnnr,
+        Naam: naam,
+        Score: Number(score == "½" || score == "1/2"? "0.5" : score),
+        Wit: bool,
+        Tegenstandernr: rankernr(tegenstander.toLowerCase()).returnnr,
+        Tegenstander: tegenstander,
+        Reeks: rankernr(naam.toLowerCase()).reeks,
+        ReeksAantal: rankernr(naam.toLowerCase()).reeksAantal
+    };
+    //console.log(rankernr(naam.toLowerCase()), rankernr(naam.toLowerCase()).returnnr )
+    return record
+}
+
+function rankernr(naam){
+    //console.log("naam", naam)
+    rankings = [];
+    rankingA = [];
+    rankingB = [];
+    var returnnr;
+    var reeks;
+    var reeksAantal;
+    for(var i = 0; i < reeksranking.length; i++){
+        if(i < 8){
+            rankingA.push(reeksranking[i].toLowerCase())
+        } else {
+            rankingB.push(reeksranking[i].toLowerCase())
+        }
+    }
+    rankings.push(rankingA, rankingB)
+    rankings.forEach((ranking, index) => {
+        for(var i = 0; i < ranking.length; i++){
+            if(ranking[i] === naam){
+                returnnr = i + 1;
+                reeksAantal = ranking.length
+                reeks = (index == 0 ? "A" : "B")
+                //console.log(ranking[i], "ba", naam, returnnr)
+            } 
+        }
+        (returnnr === undefined ? returnnr = "euh foutje" : null)
+    })
+    return {returnnr, reeks, reeksAantal}
+}
+
+function maker3(Arr){
+    var reeks = `${Arr[0].Reeks}-reeks` //
+    var output2 = document.getElementById("output2");
+    const divReeks = document.createElement('div');
+    divReeks.id = reeks;
+    const reekstitel = document.createElement('h2')
+    reekstitel.innerHTML = reeks
+    divReeks.classList.add('reeks2');
+    const div2 = document.createElement('div');
+    div2.classList.add('tableVolgende');
+    const div = document.createElement('div');
+    div.style.display = 'grid';
+    div.classList.add("table");
+    console.log(Arr[Arr.length - 1].Naamnr, Arr[0].ReeksAantal)
+    div.style.gridTemplateColumns = `repeat (${Arr[0].ReeksAantal + 3}, 1fr)`;
+    first = true;
+    var totaal = 0;
+    var punten = 0;
+    var puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);
+    samenvattingArr = [];
+    for(var i = 0; i < Arr.length; i++){
+        if(Arr[i].Naamnr === Arr[i].Naamnr){
+            //console.log(Arr[i].Wit, Arr[i].Tegenstandernr, Arr[i].Score, puntenblueprint[(Arr[i].Wit ? 0 : 1)][Arr[i].Tegenstandernr])
+            puntenblueprint[(Arr[i].Wit ? 0 : 1)][Arr[i].Tegenstandernr - 1] = Arr[i].Score;
+            totaal += 1;
+            punten += Number(Arr[i].Score);
+            //console.log(i + 1 < Arr.length, Arr[i + 1].Naamnr, Arr.length, Arr[i].Naamnr + 1)
+            if((i + 1 < Arr.length ? Arr[i + 1].Naamnr : Arr[i].Naamnr + 1) === Arr[i].Naamnr + 1){
+                console.log(puntenblueprint)
+                puntenblueprint[0][Arr[i].Naamnr - 1] = puntenblueprint[1][Arr[i].Naamnr - 1] = "X"
+                var PlayerRecordSum = {
+                    RankNr : Arr[i].Naamnr,
+                    Naam : Arr[i].Naam,
+                    Puntenverdeling : puntenblueprint,
+                    Punten : punten,
+                    Totaal : totaal
+                }
+                samenvattingArr.push(PlayerRecordSum);
+                totaal = 0;
+                punten = 0;
+                puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);                
+            }
+        }
+    }
+    console.log(samenvattingArr);
+    console.log(Arr)
+    /*
+    arr.forEach(line => {
+        if(line === arr[0]){
+            div.append(makeElement(arrinColumns(line), "header", "row"));
+        } else {
+            div.append(makeElement(arrinColumns(line), "line", "row"));
+        }
+    })*/
+    div2.append(div);
+    divReeks.append(div2);    
+    output2.append(reekstitel)
+    output2.append(divReeks);
+}
+
+function makePuntenArray(x, y){
+    var resultaat = []
+    for(var i = 0; i < y; i++){
+        var subresultaat = []
+        for(var j = 0; j < x; j++){
+            subresultaat.push("-")
+        }
+        resultaat.push(subresultaat)
+    }
+    //console.log(resultaat)
+    return resultaat
 }
 
 function arrMakeOver(arr, reeks){
@@ -94,7 +236,7 @@ function arrMakeOver(arr, reeks){
         } 
         if(i != 0){
             arr[i][0] = arr[i][0].slice(2);
-            reeksranking.push(arr[i][0])
+            //reeksranking.push(arr[i][0])
             arr[i][0] = `${i}) ${arr[i][0]}`
             arr[i][i] = 'X'         
         }
@@ -210,92 +352,6 @@ function arrMakeOver2(arr){
         }      
     }
     reeks_HTML.append(speeldagen_html);
-}
-
-function maakTabel(resultArr){
-    rankingA = [];
-    rankingB = [];
-    for(var i = 0; i < reeksranking.length; i++){
-        if(i < 8){
-            rankingA.push(reeksranking[i].toLowerCase())
-        } else {
-            rankingB.push(reeksranking[i].toLowerCase())
-        }
-    }
-    resultArr.pop()
-    rankingArr = [];
-    for(var i = 0; i < resultArr.length; i++){
-        //resultArr[i]
-        resultArr[i].forEach(line =>{
-            if(line == "Geen matchen gespeeld"){
-                //console.log(line.split(" : ")[0].split(" - ")[0])
-                i++
-            } else {
-                //console.log(line.split(" : ")[0].split(" - ")[0])
-                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[0], line.split(" : ")[1].split(" - ")[0], true, line.split(" : ")[0].split(" - ")[1]))            ;
-                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false, line.split(" : ")[0].split(" - ")[0]));
-            }
-        })
-    }
-    rankingArr.sort((a, b) => a.Naamnr - b.Naamnr)
-    //console.log(rankingArr)   
-    maker3(rankingArr) 
-}
-
-function createPlayerRecord(naam, score, bool, tegenstander){
-    //&frac12;
-    //rankernr();
-    var record = {
-        Naamnr: rankernr(naam.toLowerCase()).returnnr,
-        Naam: naam,
-        Score: Number(score == "½" || score == "1/2"? "0.5" : score),
-        Wit: bool,
-        Tegenstandernr: rankernr(tegenstander.toLowerCase()).returnnr,
-        Tegenstander: tegenstander,
-        Reeks: rankernr(naam.toLowerCase()).reeks,
-        ReeksAantal: rankernr(naam.toLowerCase()).reeksAantal
-    };
-    //console.log(rankernr(naam.toLowerCase()), rankernr(naam.toLowerCase()).returnnr )
-    return record
-}
-
-function rankernr(naam){
-    //console.log("naam", naam)
-    rankings = [];
-    rankingA = [];
-    rankingB = [];
-    var returnnr;
-    var reeks;
-    var reeksAantal;
-    for(var i = 0; i < reeksranking.length; i++){
-        if(i < 8){
-            rankingA.push(reeksranking[i].toLowerCase())
-        } else {
-            rankingB.push(reeksranking[i].toLowerCase())
-        }
-    }
-    rankings.push(rankingA, rankingB)
-    rankings.forEach((ranking, index) => {
-        for(var i = 0; i < ranking.length; i++){
-            if(ranking[i] === naam){
-                returnnr = i + 1;
-                reeksAantal = ranking.length
-                reeks = (index == 0 ? "A" : "B")
-                //console.log(ranking[i], "ba", naam, returnnr)
-            } 
-        }
-        (returnnr === undefined ? returnnr = "euh foutje" : null)
-    })
-    return {returnnr, reeks, reeksAantal}
-}
-
-function maker3(Arr){
-    for(var i = 0; i < Arr.length; i++){
-        if(Arr[i].Naamnr === 1){
-            console.log(Arr[i])
-        }
-    }
-    //console.log(Arr[0])
 }
 
 function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
