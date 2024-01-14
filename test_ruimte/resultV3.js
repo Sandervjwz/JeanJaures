@@ -8,6 +8,8 @@ const url = `${base}&sheet=${sheetName}`
 const data = [];
 const data_ = [];
 const reeksranking = [];
+const forfait = [];
+//const forfaitB = [];
 document.addEventListener("DOMContentLoaded", init);
 const output = document.getElementById("output")
 
@@ -69,15 +71,18 @@ function maker(json){
     const reeks_A = [];
     const reeks_B = [];
     for(var i = 0; i < json.length; i++){
+        //console.log(json[i][0].charAt(0))
         if(i < 9){
             (i != 0 ? reeksranking.push(json[i][0].slice(2)) : null)
-            reeks_A.push(json[i])
+            reeks_A.push(json[i]);
+            (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))            
         } else {
             (i != 9 ? reeksranking.push(json[i][0].slice(2)) : null)
-            reeks_B.push(json[i])            
+            reeks_B.push(json[i]);   
+            (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))        
         }
     }
-    //console.log(reeksranking)
+    console.log(forfait)
     arrMakeOver(reeks_A, "A-reeks");
     arrMakeOver(reeks_B, "B-reeks");
 }
@@ -149,6 +154,7 @@ function rankernr(naam){
 }
 
 function maker3(Arr){
+    var teller = Arr[0].ReeksAantal + 3
     var reeks = `${Arr[0].Reeks}-reeks` //
     var output2 = document.getElementById("output2");
     const divReeks = document.createElement('div');
@@ -161,13 +167,14 @@ function maker3(Arr){
     const div = document.createElement('div');
     div.style.display = 'grid';
     div.classList.add("table");
-    console.log(Arr[Arr.length - 1].Naamnr, Arr[0].ReeksAantal)
-    div.style.gridTemplateColumns = `repeat (${Arr[0].ReeksAantal + 3}, 1fr)`;
+    //console.log(Arr[Arr.length - 1].Naamnr, Arr[0].ReeksAantal)
+    div.style.gridTemplateColumns = `repeat (${teller}, 1fr)`;
     first = true;
     var totaal = 0;
     var punten = 0;
     var puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);
-    samenvattingArr = [];
+    var samenvattingArr = [];
+    var forfaitTeller = 0;
     for(var i = 0; i < Arr.length; i++){
         if(Arr[i].Naamnr === Arr[i].Naamnr){
             //console.log(Arr[i].Wit, Arr[i].Tegenstandernr, Arr[i].Score, puntenblueprint[(Arr[i].Wit ? 0 : 1)][Arr[i].Tegenstandernr])
@@ -176,32 +183,51 @@ function maker3(Arr){
             punten += Number(Arr[i].Score);
             //console.log(i + 1 < Arr.length, Arr[i + 1].Naamnr, Arr.length, Arr[i].Naamnr + 1)
             if((i + 1 < Arr.length ? Arr[i + 1].Naamnr : Arr[i].Naamnr + 1) === Arr[i].Naamnr + 1){
-                console.log(puntenblueprint)
+                //console.log(puntenblueprint)
                 puntenblueprint[0][Arr[i].Naamnr - 1] = puntenblueprint[1][Arr[i].Naamnr - 1] = "X"
                 var PlayerRecordSum = {
                     RankNr : Arr[i].Naamnr,
                     Naam : Arr[i].Naam,
                     Puntenverdeling : puntenblueprint,
                     Punten : punten,
-                    Totaal : totaal
+                    Totaal : totaal,
+                    ReeksAantal : Arr[i].ReeksAantal,
+                    Forfait : !forfait[forfaitTeller]
                 }
                 samenvattingArr.push(PlayerRecordSum);
                 totaal = 0;
                 punten = 0;
-                puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);                
+                puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);        
+                forfaitTeller ++        
             }
         }
     }
-    console.log(samenvattingArr);
-    console.log(Arr)
-    /*
-    arr.forEach(line => {
-        if(line === arr[0]){
-            div.append(makeElement(arrinColumns(line), "header", "row"));
-        } else {
-            div.append(makeElement(arrinColumns(line), "line", "row"));
-        }
-    })*/
+    console.log(samenvattingArr)
+    var header = {
+        Tekst : [],
+        ReeksAantal : Arr[0].ReeksAantal
+    };
+    for(var i = 0; i < teller; i++){
+        switch(i){
+            case 0:
+                header.Tekst.push("");
+                break;
+            case 1:
+                header.Tekst.push(`<img src="../img/kleur3.png" alt="kleur">`);
+                break;
+            case teller - 1:
+                header.Tekst.push("Resultaat");
+                break;
+            default:
+                header.Tekst.push(`${i - 1}`);
+        }        
+    }
+    console.log(header);
+    //console.log(Arr)
+    div.append(makeElement(arrinColumns3(header, true), "header", "row"))
+    samenvattingArr.forEach(line => {
+        div.append(makeElement(arrinColumns3(line, false), "line", "row"));
+    })
     div2.append(div);
     divReeks.append(div2);    
     output2.append(reekstitel)
@@ -219,6 +245,77 @@ function makePuntenArray(x, y){
     }
     //console.log(resultaat)
     return resultaat
+}
+
+function arrinColumns3(arr, header){
+    var teller = arr.ReeksAantal + 3
+    const rowResult = document.createElement('div');
+    //console.log(arr, arr.Puntenverdeling)
+    var subplayer = makeElement("", "subplayer", " ")
+    var subresult = makeElement("", "subresult", " ")
+    for(var j = 0; j < teller; j++){     
+        //console.log(arr[j], arr[arr.length - 1]) //.includes("/"), arr[i].includes(",")
+        /*if(arr.Tekst[j] == '0,5' || arr.Tekst[j] == '0.5'){
+            arr.Tekst[j] = '&frac12;'
+        }*/
+        if(header){
+            switch(j){
+                case 0:
+                    rowResult.append(makeElement(arr.Tekst[j], "element", "naam"))
+                    break;
+                case 1:
+                    subresult.append(makeElement(arr.Tekst[j], "element", "point"))
+                    break;
+                case teller - 1:
+                    subplayer.append(subresult)
+                    rowResult.append(subplayer)
+                    subplayer = makeElement("", "subplayer", " ")
+                    subresult = makeElement("", "subresult", " ")
+                    rowResult.append(makeElement(arr.Tekst[j], "element", "result"))
+                    break;
+                default:
+                    subresult.append(makeElement(arr.Tekst[j], "element", "point"))
+            }
+        } else {
+            switch(j){
+                case 0:
+                    rowResult.append(makeElement(`${arr.RankNr}) ${arr.Naam}`, "element", "naam"))
+                    break;
+                case teller - 1:
+                    rowResult.append(makeElement(`${arr.Punten} / ${arr.Totaal}`, "element", "result"))
+                    break;
+                default:
+                    rowResult.append(makeElement(maakSubResult(arr.Puntenverdeling), "subplayer", " "))
+                    j = teller - 2
+            }
+
+        }
+    }
+    return rowResult.innerHTML
+}
+
+function makeElement(text, classA, classB){
+    const ele = document.createElement('div');
+    ele.classList.add(classA)
+    if(classB !== " "){
+        ele.classList.add(classB)
+    }
+    ele.innerHTML = text;
+    return ele;
+}
+
+function maakSubResult(arr){
+    var result = document.createElement('div');
+    arr.forEach((line, index) => {
+        var subresult = makeElement("", "subresult", " ")
+        subresult.append(makeElement(``, "element", (index == 0 ? "white" : "black") ))
+        line.forEach(punt => {
+            subresult.append(makeElement((punt == '0.5' ? '&frac12;' : punt), "element", "point"))
+        })
+        result.append(subresult)
+    })
+    //console.log(result.innerHTML);
+    return result.innerHTML
 }
 
 function arrMakeOver(arr, reeks){
@@ -273,16 +370,10 @@ function arrInRows(arr, reeks){
 function arrinColumns(arr){
     const rowResult = document.createElement('div');
     for(var i = 0; i < arr.length; i++){
-        var bool = false;
         //console.log(arr[i], typeof arr[i], (typeof arr[i] === 'string' && arr[i].includes(",5"))) //.includes("/"), arr[i].includes(",")
         if(arr[i] == '0,5' || arr[i] == '0.5'){
             arr[i] = '&frac12;'
-            bool = true;
         } 
-        /*else if (typeof arr[i] === 'string' && arr[i].includes(",5") && bool == false) {
-            arr[i] = arr[i].replace(/,5/g, '&frac12;/')
-            //console.log(arr[i])
-        }*/
         switch(i){
             case 0:
                 rowResult.append(makeElement(arr[i], "element", "naam"))
@@ -295,16 +386,6 @@ function arrinColumns(arr){
         }
     }
     return rowResult.innerHTML
-}
-
-function makeElement(text, classA, classB){
-    const ele = document.createElement('div');
-    ele.classList.add(classA)
-    if(classB !== " "){
-        ele.classList.add(classB)
-    }
-    ele.innerHTML = text;
-    return ele;
 }
 
 function maker2(json){

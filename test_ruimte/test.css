@@ -57,6 +57,11 @@
     text-align: center;
 }
 
+.element img {
+   width: 1em;
+}
+
+
 .result {
     width: 15%;
 }
@@ -67,11 +72,14 @@
 }
 
 .subplayer {
-    width: 45%;
+    width: 50%;
 }
 
 .white, .black{
+    width: 1em;
+    height: 1em;
     border: 1px solid black;
+    margin: 1px
 }
 
 .white {
