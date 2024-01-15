@@ -73,16 +73,20 @@ function maker(json){
     for(var i = 0; i < json.length; i++){
         //console.log(json[i][0].charAt(0))
         if(i < 9){
-            (i != 0 ? reeksranking.push(json[i][0].slice(2)) : null)
-            reeks_A.push(json[i]);
-            (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))            
+            if(i != 0){
+                reeksranking.push(json[i][0].slice(2));
+                (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))
+            }
+            reeks_A.push(json[i]);        
         } else {
-            (i != 9 ? reeksranking.push(json[i][0].slice(2)) : null)
-            reeks_B.push(json[i]);   
-            (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))        
+            if(i != 9){
+                reeksranking.push(json[i][0].slice(2));
+                (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))
+            }
+            reeks_B.push(json[i]);        
         }
     }
-    console.log(forfait)
+    //console.log(forfait)
     arrMakeOver(reeks_A, "A-reeks");
     arrMakeOver(reeks_B, "B-reeks");
 }
@@ -173,7 +177,7 @@ function maker3(Arr){
     var punten = 0;
     var puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);
     var samenvattingArr = [];
-    var forfaitTeller = 0;
+    var forfaitTeller = (Arr[0].Reeks == "A" ? 0 : 8);
     for(var i = 0; i < Arr.length; i++){
         if(Arr[i].Naamnr === Arr[i].Naamnr){
             //console.log(Arr[i].Wit, Arr[i].Tegenstandernr, Arr[i].Score, puntenblueprint[(Arr[i].Wit ? 0 : 1)][Arr[i].Tegenstandernr])
@@ -191,8 +195,9 @@ function maker3(Arr){
                     Punten : punten,
                     Totaal : totaal,
                     ReeksAantal : Arr[i].ReeksAantal,
-                    Forfait : !forfait[forfaitTeller]
+                    Forfait : forfait[forfaitTeller]
                 }
+                //console.log(i, forfaitTeller ,forfait[forfaitTeller])
                 samenvattingArr.push(PlayerRecordSum);
                 totaal = 0;
                 punten = 0;
@@ -201,7 +206,43 @@ function maker3(Arr){
             }
         }
     }
-    console.log(samenvattingArr)
+    var forfaitindex = [];
+    for(var i = 0; i < samenvattingArr.length; i++){
+        if(samenvattingArr[i].Forfait){
+            forfaitindex.push(i) 
+            var forfaitArr = samenvattingArr[i].Puntenverdeling;
+            for(var x = 0; x < forfaitArr.length; x++){
+                forfaitArr[x].forEach((punt, index) => {
+                    if(punt == "-"){
+                        forfaitArr[x][index] = "F0"
+                        samenvattingArr[i].Totaal ++;
+                    }
+                })
+            }
+            //console.log(samenvattingArr[i].Puntenverdeling, forfaitArr)
+        }
+    }
+    for(var i = 0; i < forfaitindex; i++){
+        for(var j = 0; j < samenvattingArr.length; j++){
+            var puntteller = 0;
+            //console.log(samenvattingArr[j].Puntenverdeling[0][forfaitindex[i]])
+            if(samenvattingArr[j].Puntenverdeling[0][forfaitindex[i]] == "-" || samenvattingArr[j].Puntenverdeling[1][forfaitindex[i]] == "-"){
+                if(samenvattingArr[j].Puntenverdeling[0][forfaitindex[i]] == "-"){
+                    samenvattingArr[j].Puntenverdeling[0][forfaitindex[i]] = "F1"
+                    puntteller ++;
+                } 
+                if(samenvattingArr[j].Puntenverdeling[1][forfaitindex[i]] == "-"){
+                    samenvattingArr[j].Puntenverdeling[1][forfaitindex[i]] = "F1"
+                    puntteller ++;
+                }
+                console.log(puntteller)
+            }
+            samenvattingArr[j].Punten += puntteller
+            samenvattingArr[j].Totaal += puntteller
+        }
+
+
+    }
     var header = {
         Tekst : [],
         ReeksAantal : Arr[0].ReeksAantal
@@ -221,7 +262,7 @@ function maker3(Arr){
                 header.Tekst.push(`${i - 1}`);
         }        
     }
-    console.log(header);
+    //console.log(header);
     //console.log(Arr)
     div.append(makeElement(arrinColumns3(header, true), "header", "row"))
     samenvattingArr.forEach(line => {
@@ -247,6 +288,7 @@ function makePuntenArray(x, y){
 }
 
 function arrinColumns3(arr, header){
+    var forfaitbool = false;
     var teller = arr.ReeksAantal + 3
     const rowResult = document.createElement('div');
     //console.log(arr, arr.Puntenverdeling)
@@ -284,12 +326,12 @@ function arrinColumns3(arr, header){
                     rowResult.append(makeElement(`${arr.Punten} / ${arr.Totaal}`, "element", "result"))
                     break;
                 default:
-                    rowResult.append(makeElement(maakSubResult(arr.Puntenverdeling), "subplayer", " "))
+                    rowResult.append(makeElement(maakSubResult(arr), "subplayer", " "))
                     j = teller - 2
             }
-
         }
     }
+    
     return rowResult.innerHTML
 }
 
@@ -303,12 +345,17 @@ function makeElement(text, classA, classB){
     return ele;
 }
 
-function maakSubResult(arr){
+function maakSubResult(obj){
+    arr = obj.Puntenverdeling
     var result = document.createElement('div');
     arr.forEach((line, index) => {
         var subresult = makeElement("", "subresult", " ")
         subresult.append(makeElement(``, "element", (index == 0 ? "white" : "black") ))
         line.forEach(punt => {
+            /*if(obj.Forfait){
+                (punt == '-' ? punt = "F0" : null)
+                //console.log(punt, obj.Forfait)
+            }*/
             subresult.append(makeElement((punt == '0.5' ? '&frac12;' : punt), "element", "point"))
         })
         result.append(subresult)
