@@ -89,12 +89,12 @@ function maker(json){
 
 function maakTabel(resultArr){
     resultArr.pop()
+    console.log(resultArr)   
     rankingArr = [];
     for(var i = 0; i < resultArr.length; i++){
         resultArr[i].forEach(line =>{
-            if(line == "Geen matchen gespeeld"){
-                i++
-            } else {
+            console.log(line)   
+            if(line !== "Geen matchen gespeeld"){
                 rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[0], line.split(" : ")[1].split(" - ")[0], true, line.split(" : ")[0].split(" - ")[1]))            ;
                 rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false, line.split(" : ")[0].split(" - ")[0]));
             }
@@ -102,7 +102,6 @@ function maakTabel(resultArr){
         //rankingArr.push(null, null, true, line.split(" : ")[0].split(" - ")[1])  
     }
     rankingArr.sort((a, b) => a.Naamnr - b.Naamnr)
-    //console.log(rankingArr)   
     maker3(rankingArr) 
 }
 
