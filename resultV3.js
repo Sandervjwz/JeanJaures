@@ -11,7 +11,8 @@ const reeksranking = [];
 const forfait = [];
 //const forfaitB = [];
 document.addEventListener("DOMContentLoaded", init);
-const output = document.getElementById("output")
+const output = document.getElementById("Clubkampioenschap")
+var speeldagen_html;
 
 function init(){
     //console.log(url, "wekrt");
@@ -62,43 +63,97 @@ function init(){
         })
         //console.log("data", data);
         //console.log("data_", data_);
-        maker(data);
-        maker2(data_);
+        //maker(data);
+        maker2(data, data_);
     })
 }
 
-function maker(json){
+function maker2(json, json_){
     const reeks_A = [];
     const reeks_B = [];
+    //console.log(json)
     for(var i = 0; i < json.length; i++){
-        //console.log(json[i][0].charAt(0))
         if(i < 9){
             if(i != 0){
                 reeksranking.push(json[i][0].slice(2));
                 (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))
-            }
-            reeks_A.push(json[i]);        
+            }     
         } else {
             if(i != 9){
                 reeksranking.push(json[i][0].slice(2));
                 (json[i][0].charAt(0) == 'F' ? forfait.push(true) : forfait.push(false))
-            }
-            reeks_B.push(json[i]);        
+            }    
         }
     }
-    //console.log(forfait)
-    arrMakeOver(reeks_A, "A-reeks");
-    arrMakeOver(reeks_B, "B-reeks");
+    json_.forEach(record => {
+        reeks_A.push(record[0])
+        reeks_B.push(record[1])
+    })
+    //console.log("json", json, "json_", json_, "reeks A", reeks_A, "reeks B", reeks_B, "reeksranking", reeksranking, "forfait", forfait)
+    arrMakeOver2(reeks_A);
+    arrMakeOver2(reeks_B);
+    volgendeMover();
+}
+
+function arrMakeOver2(arr){
+    var result = [];
+    var speeldagen = [];
+    var currentSubarray = [];
+    var reekschecker = arr[0].substring(0, 7);
+    //console.log(arr, reekschecker)
+    //var reeks_HTML = document.getElementById(reekschecker) //waitForElement(reekschecker);
+    for(var i = 0; i < arr.length; i++){
+        if(arr[i].substring(0, 7) == reekschecker){
+            if (currentSubarray.length > 0) {
+                //console.log(currentSubarray, result, arr[i].substring(0, 7))
+                result.push(currentSubarray);
+            }
+            //console.log(result, currentSubarray, currentSubarray.length)
+            currentSubarray = [];
+            speeldagen.push(arr[i].substring(8, 13).trim());
+        } else {
+            //if(arr[i])
+            if(arr[i] !== ""){
+                console.log(arr[i].split(" : "), )
+                currentSubarray.push(arr[i])
+            }
+        }
+    }
+    result.reverse();
+    speeldagen.reverse().shift();
+    //console.log(speeldagen, result)
+    speeldagen_html = document.createElement('div')
+    speeldagen_html.classList.add('speeldagen')
+    for(var i = 0; i < result.length; i++){
+        if(i == 0){
+            speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, "volgende", `${reekschecker}: volgende`))
+        } else {
+            speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, " ", `${reekschecker}:`))              
+        }      
+    }
+    console.log(speeldagen_html);
+    maakTabel(result.reverse());
+    //reeks_HTML.append(speeldagen_html);
+}
+
+function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
+    const ele = document.createElement('div');
+    ele.classList.add(classA)
+    if(classB !== " "){
+        ele.classList.add(classB)
+    }
+    ele.innerHTML = `<h4>${reeks} speeldag ${hoeveelste} (${speeldag})</h4><p>${text.join("</p><p>")}</p>`
+    return ele;
 }
 
 function maakTabel(resultArr){
-    resultArr.pop()
+    //resultArr.pop()
+    //console.log(resultArr)   
     rankingArr = [];
-    for(var i = 0; i < resultArr.length; i++){
+    for(var i = 0; i < resultArr.length - 1; i++){
         resultArr[i].forEach(line =>{
-            if(line == "Geen matchen gespeeld"){
-                i++
-            } else {
+            //console.log(line)   
+            if(line !== "Geen matchen gespeeld"){
                 rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[0], line.split(" : ")[1].split(" - ")[0], true, line.split(" : ")[0].split(" - ")[1]))            ;
                 rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false, line.split(" : ")[0].split(" - ")[0]));
             }
@@ -106,7 +161,6 @@ function maakTabel(resultArr){
         //rankingArr.push(null, null, true, line.split(" : ")[0].split(" - ")[1])  
     }
     rankingArr.sort((a, b) => a.Naamnr - b.Naamnr)
-    //console.log(rankingArr)   
     maker3(rankingArr) 
 }
 
@@ -160,7 +214,7 @@ function rankernr(naam){
 function maker3(Arr){
     var teller = Arr[0].ReeksAantal + 3
     var reeks = `${Arr[0].Reeks}-reeks` //
-    var output2 = document.getElementById("output2");
+    //var output2 = document.getElementById("output2");
     const divReeks = document.createElement('div');
     divReeks.id = reeks;
     const reekstitel = document.createElement('h2')
@@ -236,7 +290,7 @@ function maker3(Arr){
                     samenvattingArr[j].Puntenverdeling[1][forfaitindex[i]] = "F1"
                     puntteller ++;
                 }
-                console.log(puntteller)
+                //console.log(puntteller)
             }
             samenvattingArr[j].Punten += puntteller
             samenvattingArr[j].Totaal += puntteller
@@ -271,8 +325,11 @@ function maker3(Arr){
     })
     div2.append(div);
     divReeks.append(div2);    
-    output2.append(reekstitel)
-    output2.append(divReeks);
+    //console.log("speeldagen", speeldagen_html)
+    divReeks.append(speeldagen_html);    
+    //speeldagen_html = document.createElement('div');
+    output.append(reekstitel)
+    output.append(divReeks);
 }
 
 function makePuntenArray(x, y){
@@ -365,133 +422,6 @@ function maakSubResult(obj){
     return result.innerHTML
 }
 
-function arrMakeOver(arr, reeks){
-    arr[0][0] = ''
-    for(var i = 0; i < arr.length; i++){   
-        if(reeks == 'A-reeks'){
-            arr[i].splice(9,1)
-        }  
-        if(reeks == 'B-reeks'){
-            if(arr[9][i] == '-'){
-                arr[9][i] = 'F0'
-            } if (arr[i][9] == '-'){
-                arr[i][9] = 'F1'
-            }
-        } 
-        if(i != 0){
-            arr[i][0] = arr[i][0].slice(2);
-            //reeksranking.push(arr[i][0])
-            arr[i][0] = `${i}) ${arr[i][0]}`
-            arr[i][i] = 'X'         
-        }
-    }
-    arrInRows(arr, reeks);
-}
-
-function arrInRows(arr, reeks){
-    const divReeks = document.createElement('div');
-    divReeks.id = reeks;
-    const reekstitel = document.createElement('h2')
-    reekstitel.innerHTML = reeks
-    divReeks.classList.add('reeks');
-    const div2 = document.createElement('div');
-    div2.classList.add('tableVolgende');
-    const div = document.createElement('div');
-    div.style.display = 'grid';
-    div.classList.add("table");
-    div.style.gridTemplateColumns = `repeat (${arr.length}, 1fr)`;
-    first = true;
-    arr.forEach(line => {
-        if(line === arr[0]){
-            div.append(makeElement(arrinColumns(line), "header", "row"));
-        } else {
-            div.append(makeElement(arrinColumns(line), "line", "row"));
-        }
-    })
-    div2.append(div);
-    divReeks.append(div2);    
-    output.append(reekstitel)
-    output.append(divReeks);
-}
-
-function arrinColumns(arr){
-    const rowResult = document.createElement('div');
-    for(var i = 0; i < arr.length; i++){
-        //console.log(arr[i], typeof arr[i], (typeof arr[i] === 'string' && arr[i].includes(",5"))) //.includes("/"), arr[i].includes(",")
-        if(arr[i] == '0,5' || arr[i] == '0.5'){
-            arr[i] = '&frac12;'
-        } 
-        switch(i){
-            case 0:
-                rowResult.append(makeElement(arr[i], "element", "naam"))
-                break;
-            case arr.length - 1:
-                rowResult.append(makeElement(arr[i], "element", "result"))
-                break;
-            default:
-                rowResult.append(makeElement(arr[i], "element", "point"))
-        }
-    }
-    return rowResult.innerHTML
-}
-
-function maker2(json){
-    const reeks_A = [];
-    const reeks_B = [];
-    for(var i = 0; i < json.length; i++){
-        reeks_A.push(json[i][0])
-        reeks_B.push(json[i][1])
-    }
-    //console.log("json", json, "reeks A", reeks_A, "reeks B", reeks_B)
-    arrMakeOver2(reeks_A);
-    arrMakeOver2(reeks_B);
-    volgendeMover();
-}
-
-function arrMakeOver2(arr){
-    var result = [];
-    var speeldagen = [];
-    var currentSubarray = [];
-    var reekschecker = arr[0].substring(0, 7);
-    var reeks_HTML = waitForElement(reekschecker);
-    for(var i = 0; i < arr.length; i++){
-        if(arr[i].substring(0, 7) == reekschecker){
-            if (currentSubarray.length > 0) {
-                result.push(currentSubarray);
-            }
-            currentSubarray = [];
-            speeldagen.push(arr[i].substring(8, 13).trim());
-        } else {
-            if(arr[i] !== ""){
-                currentSubarray.push(arr[i])
-            }
-        }
-    }
-    maakTabel(result);
-    result.reverse();
-    speeldagen.reverse().shift();
-    const speeldagen_html = document.createElement('div');
-    speeldagen_html.classList.add('speeldagen')
-    for(var i = 0; i < result.length; i++){
-        if(i == 0){
-            speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, "volgende", `${reekschecker}: volgende`))
-        } else {
-            speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, " ", `${reekschecker}:`))              
-        }      
-    }
-    reeks_HTML.append(speeldagen_html);
-}
-
-function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
-    const ele = document.createElement('div');
-    ele.classList.add(classA)
-    if(classB !== " "){
-        ele.classList.add(classB)
-    }
-    ele.innerHTML = `<h4>${reeks} speeldag ${hoeveelste} (${speeldag})</h4><p>${text.join("</p><p>")}</p>`
-    return ele;
-}
-
 function waitForElement(reeks) {
     var element = document.getElementById(reeks);
     while (element === null) {
@@ -503,7 +433,7 @@ function waitForElement(reeks) {
 }
 
 function volgendeMover(){
-    var getReeks = document.getElementsByClassName('reeks');
+    var getReeks = document.getElementsByClassName('reeks2');
     for(var i = 0; i < getReeks.length; i++){
         var element = getReeks[i].childNodes[1].childNodes[0];
         getReeks[i].childNodes[1].removeChild(element)

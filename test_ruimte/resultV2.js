@@ -56,8 +56,8 @@ function init(){
                 data_.push(cur_arr);
             }
         })
-        console.log("data", data);
-        console.log("data_", data_);
+        //console.log("data", data);
+        //console.log("data_", data_);
         maker(data);
         maker2(data_);
     })
@@ -178,6 +178,7 @@ function arrMakeOver2(arr){
             if (currentSubarray.length > 0) {
                 result.push(currentSubarray);
             }
+            console.log(result, currentSubarray)
             currentSubarray = [];
             speeldagen.push(arr[i].substring(8, 13).trim());
         } else {
@@ -188,6 +189,7 @@ function arrMakeOver2(arr){
     }
     result.reverse();
     speeldagen.reverse().shift();
+    console.log(speeldagen, result)
     const speeldagen_html = document.createElement('div');
     speeldagen_html.classList.add('speeldagen')
     for(var i = 0; i < result.length; i++){
