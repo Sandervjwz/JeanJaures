@@ -165,8 +165,6 @@ function maakTabel(resultArr){
 }
 
 function createPlayerRecord(naam, score, bool, tegenstander){
-    //&frac12;
-    //rankernr();
     var record = {
         Naamnr: rankernr(naam.toLowerCase()).returnnr,
         Naam: naam,
@@ -177,7 +175,6 @@ function createPlayerRecord(naam, score, bool, tegenstander){
         Reeks: rankernr(naam.toLowerCase()).reeks,
         ReeksAantal: rankernr(naam.toLowerCase()).reeksAantal
     };
-    //console.log(rankernr(naam.toLowerCase()), rankernr(naam.toLowerCase()).returnnr )
     return record
 }
 
@@ -388,8 +385,7 @@ function arrinColumns3(arr, header){
                     j = teller - 2
             }
         }
-    }
-    
+    }    
     return rowResult.innerHTML
 }
 
