@@ -112,9 +112,12 @@ function arrMakeOver2(arr){
             currentSubarray = [];
             speeldagen.push(arr[i].substring(8, 13).trim());
         } else {
-            //if(arr[i])
+            if(arr[i].split(" : ").length > 1 && arr[i].split(" : ")[1] == "1/2 - 1/2"){
+                arr[i] = arr[i].split(" : ")[0] + ' : ½ - ½'
+                //console.log("werkt", arr[i].split(" : ")[1], '½ - ½')
+            }
             if(arr[i] !== ""){
-                console.log(arr[i].split(" : "), )
+                //console.log(arr[i].split(" : "), (arr[i].split(" : ").length > 1 && arr[i].split(" : ")[1] == "1/2 - 1/2"))
                 currentSubarray.push(arr[i])
             }
         }
@@ -131,7 +134,7 @@ function arrMakeOver2(arr){
             speeldagen_html.append(makeElement2(result[i], "speeldag", speeldagen[i], result.length - i, " ", `${reekschecker}:`))              
         }      
     }
-    console.log(speeldagen_html);
+    //console.log(speeldagen_html);
     maakTabel(result.reverse());
     //reeks_HTML.append(speeldagen_html);
 }
@@ -305,7 +308,7 @@ function maker3(Arr){
                 header.Tekst.push("");
                 break;
             case 1:
-                header.Tekst.push(`<img src="../img/kleur3.png" alt="kleur">`);
+                header.Tekst.push(`<img src="./img/kleur4.png" alt="kleur">`);
                 break;
             case teller - 1:
                 header.Tekst.push("Resultaat");
