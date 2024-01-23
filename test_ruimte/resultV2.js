@@ -8,7 +8,8 @@ const url = `${base}&sheet=${sheetName}`
 const data = [];
 const data_ = [];
 document.addEventListener("DOMContentLoaded", init);
-const output = document.getElementById("Clubkampioenschap")
+//const output = document.getElementById("Clubkampioenschap")
+const output = document.getElementById("output")
 
 function init(){
     //console.log(url, "wekrt");
@@ -178,7 +179,7 @@ function arrMakeOver2(arr){
             if (currentSubarray.length > 0) {
                 result.push(currentSubarray);
             }
-            console.log(result, currentSubarray)
+            //console.log(result, currentSubarray)
             currentSubarray = [];
             speeldagen.push(arr[i].substring(8, 13).trim());
         } else {
@@ -189,7 +190,7 @@ function arrMakeOver2(arr){
     }
     result.reverse();
     speeldagen.reverse().shift();
-    console.log(speeldagen, result)
+    //console.log(speeldagen, result)
     const speeldagen_html = document.createElement('div');
     speeldagen_html.classList.add('speeldagen')
     for(var i = 0; i < result.length; i++){
