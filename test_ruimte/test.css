@@ -114,3 +114,13 @@
     margin: 6px 0;
     transition: 0.4s;
 }
+
+.rij {
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+}
+
+.agendavakje {
+    width: 14%;
+}

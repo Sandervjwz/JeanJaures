@@ -7,13 +7,14 @@ const eerstedag = (y, m) => (new Date(y, m, 1).getDay() + 6) % 7;
 document.addEventListener("DOMContentLoaded", agenda);
 
 function agenda(){
-    var dataArr = maakDataSchema();
-    maakSchema(dataArr);
-    console.log(dataArr);
+    var dataArr = maakDataAgenda();
+    maakAgendaTitel(dataArr.Arr, dataArr.Dag)
+    output.append(maakAgenda(dataArr.Arr, dataArr.Dag));
+    //console.log(dataArr, dataArr.Arr, dataArr.Dag);
 }
 
-function maakDataSchema(){
-    dag = createDag("2023-10-16") // "2021-02-03"
+function maakDataAgenda(datum){
+    dag = createDag(datum) // "2021-02-03" "2023-10-16"
     var dagen_nummer = []
     for(var i = 0; i < dag.aantal_dagen; i++){
         dagen_nummer.push(i + 1);
@@ -40,13 +41,23 @@ function maakDataSchema(){
         }
         resultaatArr.push(subresultArr)
     }
-    return resultaatArr
+    return {
+        Arr: resultaatArr,
+        Dag: dag
+    }
 }
 
 function createDag(datum){
+    var vandaag_bool = (datum != null ? (datum.charAt(9) == 0 ? true : false) : null);
+    //console.log(datum, vandaag_bool == true && datum != null)
+    if(vandaag_bool == true && datum != null){
+        datum = datum.replace("00", "01") //split("-")[2].
+        //console.log(datum, datum.split("-")[2])
+    }
     const inputdag = (datum == null ? new Date() : new Date(datum)); //"2024-01-21"
+    //console.log(vandaag_bool, datum, typeof datum, (datum != null ? (datum.charAt(9) == 0 ? true : false) : null), (datum != null ? `${datum.charAt(9)} / ${datum.charAt(8)}` : null), vandaag_bool == true && datum != null);
     var dag = {
-        dag : inputdag.getDate(),
+        dag : (!vandaag_bool ? inputdag.getDate() : 0),
         weekdag : (inputdag.getDay() + 6) % 7,
         weekdag_txt : dagen[(inputdag.getDay() + 6) % 7],
         maand : inputdag.getMonth(),
@@ -60,49 +71,66 @@ function createDag(datum){
     return dag
 }
 
-function maakSchema(Arr){
+function maakAgendaTitel(Arr, dagobj){
+    const hoofdding = makeElement("", "titelbalk", null) ;
+    //dagobj.maand = 1
+    var vorigjaar_bool = (dagobj.maand == 0 ? true : false);
+    var volgendjaar_bool = (dagobj.maand == 11 ? true : false);
+    //var test2 = maakDataAgenda("2024-12-00"), test2
+    const vorige_maand = maakDataAgenda(`${(vorigjaar_bool ? dagobj.jaar - 1 : dagobj.jaar)}-${(dagobj.maand + 11) % 12 + 1}-00`)
+    var vorige_maand_txt = maakAgenda(vorige_maand.Arr, vorige_maand.Dag)
+    const volgende_maand = maakDataAgenda(`${(volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)}-${(dagobj.maand + 1) % 12 + 1}-00`)
+    var volgende_maand_txt = maakAgenda(volgende_maand.Arr, volgende_maand.Dag)
+    var test = dagobj.maand
+    console.log((dagobj.maand + 11) % 12, (dagobj.maand) % 12, (dagobj.maand + 1) % 12, vorige_maand, vorige_maand_txt, (dagobj.maand == 0 ? true : false), vorigjaar_bool, (dagobj.maand == 11 ? true : false), volgendjaar_bool, (vorigjaar_bool ? dagobj.jaar - 1 : (volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)) ) 
+    //`${dagobj.jaar}-${dagobj.maand + 13 % 12}-0`
+    dagobj.maand = test
+    //const vorigedag = maakDataAgenda(`${dagobj.jaar}-${dagobj.maand}-0`)
+    
+    //hoofding.append()
+    //const hoofdding = (makeElement(`${makeElement("test", "miniagenda", "terug")} ${makeElement(dagobj.maand_txt, "titel", null)} ${makeElement("test2", "miniagenda", "volgende")}`, "titelbalk", null))
+    console.log(hoofdding)
+    hoofdding.append(vorige_maand_txt)     
+    hoofdding.append()
+    hoofdding.append(volgende_maand_txt)   
+    output.append(hoofdding)    
+}
+
+function maakAgenda(Arr, dagobj){
     const result = document.createElement('div');
     const resultHTML = document.createElement('div');
+    resultHTML.classList.add("agenda")
     resultHTML.style.display = 'grid';
     resultHTML.style.gridTemplateColumns = `repeat (${Arr[0].length}, 1fr)`;
     //var resultaatArr = makeElement("", "resultaat");
     for(var i = 0; i < Arr.length; i++){
-        var subresultArr = makeElement("", "rij");
+        var subresultArr = makeElement("", "rij", null);
         for(var j = 0; j < Arr[i].length; j++){
-            //console.log(Arr[i])
+            //console.log(Arr[i][j], dagobj.dag, (Arr[i][j] == dagobj.dag ? true : false))
             if(i == 0){
-                subresultArr.append(makeElement(Arr[i][j], "header"))
+                subresultArr.append(makeElement(Arr[i][j], "header", "agendavakje"))
             } else {
-                subresultArr.append(makeElement(Arr[i][j], "dag"))
+                subresultArr.append(makeElement(Arr[i][j], "dag", "agendavakje", (Arr[i][j] == dagobj.dag ? true : false)))
             }
         }
         resultHTML.append(subresultArr)
     }
-    //resultHTML.append(resultaatArr)
     result.append(resultHTML)
-    console.log(result.innerHTML)
-    output.append(result)
-
-
-
-
-    /*const divReeks = document.createElement('div');
-    divReeks.id = reeks;
-    const reekstitel = document.createElement('h2')
-    reekstitel.innerHTML = reeks
-    divReeks.classList.add('reeks2');
-    const div2 = document.createElement('div');
-    div.classList.add("table");
-    //console.log(Arr[Arr.length - 1].Naamnr, Arr[0].ReeksAantal)*/
-
+    //console.log(result.innerHTML)
+    //output.append(hoofdding)
+    //output.append(result)       
+    return result
 }
 
-function makeElement(text, classA){ //,classB
+function makeElement(text, classA, classB, vandaag){ //
     const ele = document.createElement('div');
     ele.classList.add(classA)
-    /*if(classB !== " "){
+    if(classB !== null){
         ele.classList.add(classB)
-    }*/
+    }
+    if(vandaag){
+        ele.style.color = 'red'
+    }
     ele.innerHTML = text;
     return ele;
 }
