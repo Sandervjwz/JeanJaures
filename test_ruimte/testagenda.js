@@ -73,31 +73,49 @@ function createDag(datum){
 
 function maakAgendaTitel(Arr, dagobj){
     const hoofdding = makeElement("", "titelbalk", null) ;
-    //dagobj.maand = 1
     var vorigjaar_bool = (dagobj.maand == 0 ? true : false);
     var volgendjaar_bool = (dagobj.maand == 11 ? true : false);
-    //var test2 = maakDataAgenda("2024-12-00"), test2
+
     const vorige_maand = maakDataAgenda(`${(vorigjaar_bool ? dagobj.jaar - 1 : dagobj.jaar)}-${(dagobj.maand + 11) % 12 + 1}-00`)
+    vorige_maand.Arr[0].forEach((headerdag, index) => {
+        vorige_maand.Arr[0][index] = headerdag[0].toUpperCase()
+    })
     var vorige_maand_txt = maakAgenda(vorige_maand.Arr, vorige_maand.Dag)
+
+    console.log(vorige_maand, vorige_maand_txt, vorige_maand.Arr[0]) 
+    const titel_html = makeElement("", "agendatitel", null)
+    const jaar_titel = document.createElement('h3');
+    jaar_titel.innerText = dagobj.jaar
+    titel_html.append(jaar_titel)
+    const maand_titel = document.createElement('h3');
+    maand_titel.innerText = dagobj.maand_txt[0].toUpperCase() + dagobj.maand_txt.slice(1)
+    titel_html.append(maand_titel)
+
     const volgende_maand = maakDataAgenda(`${(volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)}-${(dagobj.maand + 1) % 12 + 1}-00`)
+    volgende_maand.Arr[0].forEach((headerdag, index) => {
+        volgende_maand.Arr[0][index] = headerdag[0].toUpperCase()
+    })
     var volgende_maand_txt = maakAgenda(volgende_maand.Arr, volgende_maand.Dag)
-    var test = dagobj.maand
-    console.log((dagobj.maand + 11) % 12, (dagobj.maand) % 12, (dagobj.maand + 1) % 12, vorige_maand, vorige_maand_txt, (dagobj.maand == 0 ? true : false), vorigjaar_bool, (dagobj.maand == 11 ? true : false), volgendjaar_bool, (vorigjaar_bool ? dagobj.jaar - 1 : (volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)) ) 
+    //dagobj.maand + 11) % 12, (dagobj.maand) % 12, (dagobj.maand + 1) % 12, vorige_maand, vorige_maand_txt, (dagobj.maand == 0 ? true : false), vorigjaar_bool, (dagobj.maand == 11 ? true : false), volgendjaar_bool, (vorigjaar_bool ? dagobj.jaar - 1 : (volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)) 
     //`${dagobj.jaar}-${dagobj.maand + 13 % 12}-0`
-    dagobj.maand = test
+    //var test = dagobj.maand
+    //dagobj.maand = 1
+    //dagobj.maand = test
     //const vorigedag = maakDataAgenda(`${dagobj.jaar}-${dagobj.maand}-0`)
+    //var test2 = maakDataAgenda("2024-12-00"), test2
     
     //hoofding.append()
     //const hoofdding = (makeElement(`${makeElement("test", "miniagenda", "terug")} ${makeElement(dagobj.maand_txt, "titel", null)} ${makeElement("test2", "miniagenda", "volgende")}`, "titelbalk", null))
     console.log(hoofdding)
     hoofdding.append(vorige_maand_txt)     
-    hoofdding.append()
+    hoofdding.append(titel_html)
     hoofdding.append(volgende_maand_txt)   
     output.append(hoofdding)    
 }
 
 function maakAgenda(Arr, dagobj){
     const result = document.createElement('div');
+    result.id = "main_agenda"
     const resultHTML = document.createElement('div');
     resultHTML.classList.add("agenda")
     resultHTML.style.display = 'grid';
@@ -131,7 +149,11 @@ function makeElement(text, classA, classB, vandaag){ //
     if(vandaag){
         ele.style.color = 'red'
     }
-    ele.innerHTML = text;
+    if(classA == "header"){
+        ele.innerHTML = `<span class="kort">${text[0].toUpperCase()}</span><span class="lang">${text}</span>`;
+    } else {
+        ele.innerHTML = text;
+    }
     return ele;
 }
 

@@ -115,6 +115,7 @@
     transition: 0.4s;
 }
 
+/*Agenda*/
 .rij {
     width: 70%;
     display: flex;
@@ -123,4 +124,72 @@
 
 .agendavakje {
     width: 14%;
+    display: flex;
+    justify-content: center;
+}
+
+.titelbalk {
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.titelbalk .agenda{
+    display: flex;
+    width: 100%;
+    color: hotpink;
+}
+
+.titelbalk .rij {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.titelbalk .agendavakje {
+    font-size: small;
+    padding: 1px;
+    display: flex;
+    justify-content: center;
+}
+
+.titelbalk .agendatitel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#main_agenda .kort{
+    display: none
+}
+
+#main_agenda .lang{
+    display: flex
+}
+
+#test .Kort{
+    display: none
+}
+
+#test .Lang{
+    display: flex
+}
+
+@media (max-width: 1000px){
+    #main_agenda .kort{
+        display: flex
+    }
+    
+    #main_agenda .lang{
+        display: none
+    }
+
+    #test .Kort{
+        display: flex
+    }
+
+    #test .Lang{
+        display: none
+    }
 }
