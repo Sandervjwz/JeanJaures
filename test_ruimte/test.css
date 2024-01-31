@@ -134,9 +134,16 @@
     justify-content: space-between;
 }
 
+.agendatitel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .titelbalk .agenda{
     display: flex;
-    width: 100%;
+    width: 25vw;
     color: hotpink;
 }
 
@@ -153,11 +160,8 @@
     justify-content: center;
 }
 
-.titelbalk .agendatitel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.titelbalk .header {
+    padding: 3px;
 }
 
 #main_agenda .kort{

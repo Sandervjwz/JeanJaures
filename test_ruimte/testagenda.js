@@ -5,6 +5,7 @@ const dagen = ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterd
 const aantaldagen = (y, m) => new Date(y, (m + 1), 0).getDate();
 const eerstedag = (y, m) => (new Date(y, m, 1).getDay() + 6) % 7;
 document.addEventListener("DOMContentLoaded", agenda);
+var match_dagen = ["24/09", "15/10", "22/10", "19/11", "03/12", "28/01", "04/02", "18/02", "10/03", "24/03", "21/04"];
 
 function agenda(){
     var dataArr = maakDataAgenda();
@@ -78,24 +79,22 @@ function maakAgendaTitel(Arr, dagobj){
 
     const vorige_maand = maakDataAgenda(`${(vorigjaar_bool ? dagobj.jaar - 1 : dagobj.jaar)}-${(dagobj.maand + 11) % 12 + 1}-00`)
     vorige_maand.Arr[0].forEach((headerdag, index) => {
-        vorige_maand.Arr[0][index] = headerdag[0].toUpperCase()
+        vorige_maand.Arr[0][index] = headerdag.slice(0, 2)
     })
     var vorige_maand_txt = maakAgenda(vorige_maand.Arr, vorige_maand.Dag)
 
-    console.log(vorige_maand, vorige_maand_txt, vorige_maand.Arr[0]) 
-    const titel_html = makeElement("", "agendatitel", null)
-    const jaar_titel = document.createElement('h3');
-    jaar_titel.innerText = dagobj.jaar
-    titel_html.append(jaar_titel)
-    const maand_titel = document.createElement('h3');
-    maand_titel.innerText = dagobj.maand_txt[0].toUpperCase() + dagobj.maand_txt.slice(1)
-    titel_html.append(maand_titel)
+    //console.log(vorige_maand, vorige_maand_txt, vorige_maand.Arr[0]) 
 
     const volgende_maand = maakDataAgenda(`${(volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)}-${(dagobj.maand + 1) % 12 + 1}-00`)
     volgende_maand.Arr[0].forEach((headerdag, index) => {
-        volgende_maand.Arr[0][index] = headerdag[0].toUpperCase()
+        volgende_maand.Arr[0][index] = headerdag.slice(0, 2)
     })
     var volgende_maand_txt = maakAgenda(volgende_maand.Arr, volgende_maand.Dag)
+
+    hoofdding.append(vorige_maand_txt)     
+    //hoofdding.append(titel_html)
+    hoofdding.append(volgende_maand_txt)   
+    output.append(hoofdding)    
     //dagobj.maand + 11) % 12, (dagobj.maand) % 12, (dagobj.maand + 1) % 12, vorige_maand, vorige_maand_txt, (dagobj.maand == 0 ? true : false), vorigjaar_bool, (dagobj.maand == 11 ? true : false), volgendjaar_bool, (vorigjaar_bool ? dagobj.jaar - 1 : (volgendjaar_bool ? dagobj.jaar + 1 : dagobj.jaar)) 
     //`${dagobj.jaar}-${dagobj.maand + 13 % 12}-0`
     //var test = dagobj.maand
@@ -103,14 +102,9 @@ function maakAgendaTitel(Arr, dagobj){
     //dagobj.maand = test
     //const vorigedag = maakDataAgenda(`${dagobj.jaar}-${dagobj.maand}-0`)
     //var test2 = maakDataAgenda("2024-12-00"), test2
-    
+    //console.log(hoofdding)
     //hoofding.append()
     //const hoofdding = (makeElement(`${makeElement("test", "miniagenda", "terug")} ${makeElement(dagobj.maand_txt, "titel", null)} ${makeElement("test2", "miniagenda", "volgende")}`, "titelbalk", null))
-    console.log(hoofdding)
-    hoofdding.append(vorige_maand_txt)     
-    hoofdding.append(titel_html)
-    hoofdding.append(volgende_maand_txt)   
-    output.append(hoofdding)    
 }
 
 function maakAgenda(Arr, dagobj){
@@ -120,6 +114,10 @@ function maakAgenda(Arr, dagobj){
     resultHTML.classList.add("agenda")
     resultHTML.style.display = 'grid';
     resultHTML.style.gridTemplateColumns = `repeat (${Arr[0].length}, 1fr)`;
+    const titel_html = makeElement("", "agendatitel", null)
+    const titel = document.createElement('h3');
+    titel.innerText = dagobj.maand_txt[0].toUpperCase() + dagobj.maand_txt.slice(1) + " - " + dagobj.jaar
+    titel_html.append(titel)
     //var resultaatArr = makeElement("", "resultaat");
     for(var i = 0; i < Arr.length; i++){
         var subresultArr = makeElement("", "rij", null);
@@ -133,6 +131,7 @@ function maakAgenda(Arr, dagobj){
         }
         resultHTML.append(subresultArr)
     }
+    result.append(titel_html)
     result.append(resultHTML)
     //console.log(result.innerHTML)
     //output.append(hoofdding)
@@ -150,10 +149,13 @@ function makeElement(text, classA, classB, vandaag){ //
         ele.style.color = 'red'
     }
     if(classA == "header"){
-        ele.innerHTML = `<span class="kort">${text[0].toUpperCase()}</span><span class="lang">${text}</span>`;
+        ele.innerHTML = `<span class="kort">${text[0].toUpperCase()}</span><span class="lang">${text[0].toUpperCase() + text.slice(1)}</span>`;
     } else {
         ele.innerHTML = text;
     }
     return ele;
 }
 
+function maakLegende(){
+
+}

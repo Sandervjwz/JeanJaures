@@ -2,6 +2,7 @@ var menuItems = document.getElementsByClassName("menuItem");
 var itemMenu = document.getElementsByClassName("itemMenu")
 var arr_menuItems = [];
 var wedstrijd_index = 0;
+var match_dagen = ["24/09", "15/10", "22/10", "19/11", "03/12", "28/01", "04/02", "18/02", "10/03", "24/03", "21/04"];
 
 window.onload = function () {
    jaar.innerText = new Date().getFullYear();
@@ -53,7 +54,6 @@ var menuFunction = function () {
 //automatisch volgende wedstrijd updaten
 function updateVolgende(){
    var update_link = document.getElementsByClassName("ICres");
-   var match_dagen = ["24/09", "15/10", "22/10", "19/11", "03/12", "28/01", "04/02", "18/02", "10/03", "24/03", "21/04"];
    var match_numbers = [];
    match_dagen.forEach(element => {
       match_numbers.push(DMConverter(element))
