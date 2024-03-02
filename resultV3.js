@@ -251,7 +251,7 @@ function maker3(Arr){
                     Puntenverdeling_tosort : puntenblueprint,
                     Punten : punten,
                     Totaal : totaal,
-                    PuntenPercent :  Math.round(punten / totaal * 100), 
+                    PuntenPercent : 0, 
                     ReeksAantal : Arr[i].ReeksAantal,
                     Forfait : forfait[forfaitTeller]
                 }
@@ -320,7 +320,10 @@ function maker3(Arr){
                 header.Tekst.push("Resultaat");
                 break;
             default:
-                header.Tekst.push(`${i - 1}`);
+                header.Tekst.push(`${(i - 1)}`);
+                //console.log(samenvattingArr[i - 2], (samenvattingArr[i - 2].Forfait ? `<span>F</span>` : ""))
+                // (samenvattingArr[i - 2].Forfait ? `<span style="color:black">F</span>` : "")
+                // ${`<span style="color:black">F</span>`}
         }        
     }
     //console.log(header);
@@ -358,7 +361,6 @@ function reSort(input){
     var changeArr = []
     var RestArr = []
     for(var i = 0; i < input.length; i++){
-        input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 100)
         input[i].RankNr_new = i + 1
         if(input[i].RankNr_new === input[i].RankNr_OG){
             RestArr.push(input[i].RankNr_OG)
@@ -372,7 +374,6 @@ function reSort(input){
     for(var i = 0; i < changeArr.length; i++){
         var Puntenverdeling_new = makePuntenArray(changeArr[0].Puntenverdeling[0].length, 2)
         var Puntenverdeling_sort = changeArr[i].Puntenverdeling
-        changeArr[i].i_new
         Puntenverdeling_new.forEach((rij, index_r) => {
             RestArr.forEach(element => {
                 rij[element - 1] = Puntenverdeling_sort[index_r][element - 1]
@@ -382,12 +383,16 @@ function reSort(input){
             })
         })
         changeArr[i].Puntenverdeling = Puntenverdeling_new
-        //console.log(Puntenverdeling_new, Puntenverdeling_sort, RestArr, changeArr[i])
     }
     input.forEach((element, index) => {
         element.Puntenverdeling = changeArr[index].Puntenverdeling
+        if(index != 0){
+            if(input[index].PuntenPercent == input[index - 1].PuntenPercent){
+                input[index].RankNr_new = index
+            }
+        }
     })
-    console.log(input, changeArr)
+    //console.log(input, changeArr)
 }
 
 function arrinColumns3(arr, header){
