@@ -231,7 +231,7 @@ function maker3(Arr){
     var totaal = 0;
     var punten = 0;
     var puntenblueprint = makePuntenArray(Arr[0].ReeksAantal, 2);
-    var samenvattingArr = [];
+    var samenvattingArr = [];  
     var forfaitTeller = (Arr[0].Reeks == "A" ? 0 : 8);
     for(var i = 0; i < Arr.length; i++){
         if(Arr[i].Naamnr === Arr[i].Naamnr){
@@ -244,11 +244,14 @@ function maker3(Arr){
                 //console.log(puntenblueprint)
                 puntenblueprint[0][Arr[i].Naamnr - 1] = puntenblueprint[1][Arr[i].Naamnr - 1] = "X"
                 var PlayerRecordSum = {
-                    RankNr : Arr[i].Naamnr,
+                    RankNr_OG : Arr[i].Naamnr,
+                    RankNr_new : 0,
                     Naam : Arr[i].Naam,
                     Puntenverdeling : puntenblueprint,
+                    Puntenverdeling_tosort : puntenblueprint,
                     Punten : punten,
                     Totaal : totaal,
+                    PuntenPercent :  Math.round(punten / totaal * 100), 
                     ReeksAantal : Arr[i].ReeksAantal,
                     Forfait : forfait[forfaitTeller]
                 }
@@ -262,6 +265,7 @@ function maker3(Arr){
         }
     }
     var forfaitindex = [];
+    //console.log(samenvattingArr)
     for(var i = 0; i < samenvattingArr.length; i++){
         if(samenvattingArr[i].Forfait){
             forfaitindex.push(i) 
@@ -277,7 +281,8 @@ function maker3(Arr){
             //console.log(samenvattingArr[i].Puntenverdeling, forfaitArr)
         }
     }
-    for(var i = 0; i < forfaitindex; i++){
+    //console.log(forfaitindex)
+    for(var i = 0; i < forfaitindex.length; i++){
         for(var j = 0; j < samenvattingArr.length; j++){
             var puntteller = 0;
             //console.log(samenvattingArr[j].Puntenverdeling[0][forfaitindex[i]])
@@ -298,6 +303,7 @@ function maker3(Arr){
 
 
     }
+    reSort(samenvattingArr)
     var header = {
         Tekst : [],
         ReeksAantal : Arr[0].ReeksAantal
@@ -341,12 +347,51 @@ function makePuntenArray(x, y){
         }
         resultaat.push(subresultaat)
     }
-    //console.log(resultaat)
     return resultaat
 }
 
+function reSort(input){
+    for(var i = 0; i < input.length; i++){
+        input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 100)
+    }
+    input.sort(function (a, b){return b.PuntenPercent - a.PuntenPercent})
+    var changeArr = []
+    var RestArr = []
+    for(var i = 0; i < input.length; i++){
+        input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 100)
+        input[i].RankNr_new = i + 1
+        if(input[i].RankNr_new === input[i].RankNr_OG){
+            RestArr.push(input[i].RankNr_OG)
+        }
+        changeArr.push({
+            i_old : input[i].RankNr_OG,
+            i_new : input[i].RankNr_new,
+            Puntenverdeling : input[i].Puntenverdeling_tosort
+        })
+    }
+    for(var i = 0; i < changeArr.length; i++){
+        var Puntenverdeling_new = makePuntenArray(changeArr[0].Puntenverdeling[0].length, 2)
+        var Puntenverdeling_sort = changeArr[i].Puntenverdeling
+        changeArr[i].i_new
+        Puntenverdeling_new.forEach((rij, index_r) => {
+            RestArr.forEach(element => {
+                rij[element - 1] = Puntenverdeling_sort[index_r][element - 1]
+            })
+            changeArr.forEach(element => {
+                rij[element.i_new - 1] = Puntenverdeling_sort[index_r][element.i_old - 1]
+            })
+        })
+        changeArr[i].Puntenverdeling = Puntenverdeling_new
+        //console.log(Puntenverdeling_new, Puntenverdeling_sort, RestArr, changeArr[i])
+    }
+    input.forEach((element, index) => {
+        element.Puntenverdeling = changeArr[index].Puntenverdeling
+    })
+    console.log(input, changeArr)
+}
+
 function arrinColumns3(arr, header){
-    var forfaitbool = false;
+    //var forfaitbool = false;
     var teller = arr.ReeksAantal + 3
     const rowResult = document.createElement('div');
     //console.log(arr, arr.Puntenverdeling)
@@ -378,7 +423,7 @@ function arrinColumns3(arr, header){
         } else {
             switch(j){
                 case 0:
-                    rowResult.append(makeElement(`${arr.RankNr}) ${arr.Naam}`, "element", "naam"))
+                    rowResult.append(makeElement(`${arr.RankNr_new}) ${arr.Naam}`, "element", "naam"))
                     break;
                 case teller - 1:
                     rowResult.append(makeElement(`${arr.Punten} / ${arr.Totaal}`, "element", "result"))

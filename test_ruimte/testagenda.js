@@ -109,13 +109,13 @@ function maakAgendaTitel(Arr, dagobj){
 
 function maakAgenda(Arr, dagobj){
     const result = document.createElement('div');
-    result.id = "main_agenda"
+    result.classList.add("main_agenda");
     const resultHTML = document.createElement('div');
     resultHTML.classList.add("agenda")
     resultHTML.style.display = 'grid';
     resultHTML.style.gridTemplateColumns = `repeat (${Arr[0].length}, 1fr)`;
     const titel_html = makeElement("", "agendatitel", null)
-    const titel = document.createElement('h3');
+    const titel = document.createElement('h4');
     titel.innerText = dagobj.maand_txt[0].toUpperCase() + dagobj.maand_txt.slice(1) + " - " + dagobj.jaar
     titel_html.append(titel)
     //var resultaatArr = makeElement("", "resultaat");
