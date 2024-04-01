@@ -18,7 +18,7 @@ header {
    top: 0;
    left: 0;
    right: 0;
-   height: 2em;
+   height: 5%;
    display: flex;
    width: auto;
    flex-direction: row;
@@ -36,7 +36,8 @@ header a {
 }
 
 main {
-   margin-top: 2em;
+   height: 90%;
+   margin-top: 10%;
 }
 
 #Home {
@@ -105,6 +106,7 @@ img {
 }
 
 footer {
+   height: 5%;
    text-align: center;
 }
 

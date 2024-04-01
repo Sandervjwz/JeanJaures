@@ -111,6 +111,20 @@ function arrMakeOver2(arr){
             //console.log(result, currentSubarray, currentSubarray.length)
             currentSubarray = [];
             speeldagen.push(arr[i].substring(8, 13).trim());
+            var currentDate = arr[i].substring(8, 13).trim();
+            var currentDateResult;
+            var bool = false;
+            if(currentDate.length != 5){
+                bool = true
+                currentDateResult = `${(Number(currentDate.split("/")[0]).length = 1 ? "0" + Number(currentDate.split("/")[0]) : Number(currentDate.split("/")[0]))}/`
+            } else {
+                if(isNaN(currentDate.split("/")[1])){
+                    bool = true
+                } else {
+                    bool = false
+                }
+            }
+            console.log(currentDate, bool, currentDate.split("/")[0], Number(currentDate.split("/")[1]), currentDateResult)
         } else {
             if(arr[i].split(" : ").length > 1 && arr[i].split(" : ")[1] == "1/2 - 1/2"){
                 arr[i] = arr[i].split(" : ")[0] + ' : ½ - ½'
@@ -155,10 +169,12 @@ function maakTabel(resultArr){
     rankingArr = [];
     for(var i = 0; i < resultArr.length - 1; i++){
         resultArr[i].forEach(line =>{
-            //console.log(line)   
+            //console.log(line.trim().toLowerCase()) 
             if(line !== "Geen matchen gespeeld"){
-                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[0], line.split(" : ")[1].split(" - ")[0], true, line.split(" : ")[0].split(" - ")[1]))            ;
-                rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false, line.split(" : ")[0].split(" - ")[0]));
+                //console.log("N&I2", line.split(":")[0].trim().split("-")[0].trim(), line.split(":")[1].trim().split("-")[0].trim(), true, line.split(":")[0].trim().split("-")[1].trim())  
+                rankingArr.push(createPlayerRecord(line.split(":")[0].trim().split("-")[0].trim(), line.split(":")[1].trim().split("-")[0].trim(), true, line.split(":")[0].trim().split("-")[1].trim()));
+                rankingArr.push(createPlayerRecord(line.split(":")[0].trim().split("-")[1].trim(), line.split(":")[1].trim().split("-")[1].trim(), false, line.split(":")[0].trim().split("-")[0].trim()));
+                //rankingArr.push(createPlayerRecord(line.split(" : ")[0].split(" - ")[1], line.split(" : ")[1].split(" - ")[1], false, line.split(" : ")[0].split(" - ")[0]));
             }
         })
         //rankingArr.push(null, null, true, line.split(" : ")[0].split(" - ")[1])  
@@ -171,7 +187,7 @@ function createPlayerRecord(naam, score, bool, tegenstander){
     var record = {
         Naamnr: rankernr(naam.toLowerCase()).returnnr,
         Naam: naam,
-        Score: Number(score == "½" || score == "1/2"? "0.5" : score),
+        Score: Number(score == "½" || score == "1/2" ? "0.5" : score),
         Wit: bool,
         Tegenstandernr: rankernr(tegenstander.toLowerCase()).returnnr,
         Tegenstander: tegenstander,
@@ -354,17 +370,13 @@ function makePuntenArray(x, y){
 }
 
 function reSort(input){
+    var changeArr = []
     for(var i = 0; i < input.length; i++){
         input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 100)
     }
     input.sort(function (a, b){return b.PuntenPercent - a.PuntenPercent})
-    var changeArr = []
-    var RestArr = []
     for(var i = 0; i < input.length; i++){
         input[i].RankNr_new = i + 1
-        if(input[i].RankNr_new === input[i].RankNr_OG){
-            RestArr.push(input[i].RankNr_OG)
-        }
         changeArr.push({
             i_old : input[i].RankNr_OG,
             i_new : input[i].RankNr_new,
@@ -375,9 +387,6 @@ function reSort(input){
         var Puntenverdeling_new = makePuntenArray(changeArr[0].Puntenverdeling[0].length, 2)
         var Puntenverdeling_sort = changeArr[i].Puntenverdeling
         Puntenverdeling_new.forEach((rij, index_r) => {
-            RestArr.forEach(element => {
-                rij[element - 1] = Puntenverdeling_sort[index_r][element - 1]
-            })
             changeArr.forEach(element => {
                 rij[element.i_new - 1] = Puntenverdeling_sort[index_r][element.i_old - 1]
             })
@@ -388,7 +397,7 @@ function reSort(input){
         element.Puntenverdeling = changeArr[index].Puntenverdeling
         if(index != 0){
             if(input[index].PuntenPercent == input[index - 1].PuntenPercent){
-                input[index].RankNr_new = index
+                element.RankNr_new = index
             }
         }
     })
