@@ -372,8 +372,9 @@ function makePuntenArray(x, y){
 function reSort(input){
     var changeArr = []
     for(var i = 0; i < input.length; i++){
-        input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 100)
+        input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 10000) / 100
     }
+    console.log(input)
     input.sort(function (a, b){return b.PuntenPercent - a.PuntenPercent})
     for(var i = 0; i < input.length; i++){
         input[i].RankNr_new = i + 1
@@ -393,11 +394,17 @@ function reSort(input){
         })
         changeArr[i].Puntenverdeling = Puntenverdeling_new
     }
+    var laatste_dubbele_index = 0
     input.forEach((element, index) => {
         element.Puntenverdeling = changeArr[index].Puntenverdeling
         if(index != 0){
             if(input[index].PuntenPercent == input[index - 1].PuntenPercent){
-                element.RankNr_new = index
+                if(input[laatste_dubbele_index].PuntenPercent === input[element.RankNr_new - 2].PuntenPercent){
+                    element.RankNr_new = input[index - 2].RankNr_new
+                } else {
+                    laatste_dubbele_index = index
+                    element.RankNr_new = index
+                }
             }
         }
     })

@@ -1,6 +1,7 @@
 :root {
    --primary: white;
    --secondary: black;
+   --dynamic-margin: 0px;
    /*--on-primary: #fafafa;
    --on-secondary: #000504;*/
 }
@@ -14,20 +15,13 @@
 }
 
 header {
-   position: fixed;
-   top: 0;
-   left: 0;
-   right: 0;
-   height: 5%;
    display: flex;
    width: auto;
    flex-direction: row;
    justify-content: center;
-   align-self: center;
-}
-
-header .menuItem {
-   margin: auto;
+   align-items: center;
+   margin: 2px;
+   height: 25px;
 }
 
 header a {
@@ -37,11 +31,8 @@ header a {
 
 main {
    height: 90%;
-   margin-top: 10%;
-}
-
-#Home {
-   margin-left: 1em;
+   width: auto;
+   margin: 8px 16px;
 }
 
 #Home h2, #Home h3{
@@ -248,14 +239,14 @@ footer {
    height: 50px;
 }
 
-/*Contact*/
+/*Contact
 #Contact{
    margin-left: 1em;
 }
 
 #Contact h3{
    margin-top: 0.5em;
-}
+}*/
 
 #Contact img{
    width: 300px;
@@ -267,9 +258,6 @@ footer {
 }
 
 /*Nuttige links*/
-#Nuttige{
-   margin-left: 1em;
-}
 
 .linkje{
    margin: 1em;

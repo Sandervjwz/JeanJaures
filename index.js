@@ -37,7 +37,13 @@ window.onload = function () {
    }
    itemMenu[0].hidden = false;
    var event = new Event('loadDone');
-   document.dispatchEvent(event);
+   document.dispatchEvent(event);  
+   
+   //const headerElement = document.querySelector('header');
+   //const contentElement = document.querySelector('main');
+   // Set the margin-top of the content element to the height of the header element
+   //contentElement.style.marginTop = `${headerElement.offsetHeight}px`;
+   //document.documentElement.style.setProperty('--dynamic-margin', `${document.querySelector('header').style.height}px`);
 }
 
 var menuFunction = function () {
