@@ -165,7 +165,7 @@ function makeElement2(text, classA, speeldag, hoeveelste, classB, reeks){
 
 function maakTabel(resultArr){
     //resultArr.pop()
-    //console.log(resultArr)   
+    console.log(resultArr)   
     rankingArr = [];
     for(var i = 0; i < resultArr.length - 1; i++){
         resultArr[i].forEach(line =>{
@@ -281,7 +281,7 @@ function maker3(Arr){
         }
     }
     var forfaitindex = [];
-    //console.log(samenvattingArr)
+    console.log(samenvattingArr)
     for(var i = 0; i < samenvattingArr.length; i++){
         if(samenvattingArr[i].Forfait){
             forfaitindex.push(i) 
@@ -374,7 +374,6 @@ function reSort(input){
     for(var i = 0; i < input.length; i++){
         input[i].PuntenPercent = Math.round(input[i].Punten / input[i].Totaal * 10000) / 100
     }
-    console.log(input)
     input.sort(function (a, b){return b.PuntenPercent - a.PuntenPercent})
     for(var i = 0; i < input.length; i++){
         input[i].RankNr_new = i + 1
