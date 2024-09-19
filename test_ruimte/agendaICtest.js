@@ -3,6 +3,8 @@ const sheetID = '1bmYBrKD63aJ6uHzLmXcBbB5qf5ecCrHEqNV9b7N-X1U'
 const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
 const sheetName = 'Interclub';
 const url = `${base}&sheet=${sheetName}`
+// headers is voor de beschrijving van de kolommen
+var headers = [];
 
 document.addEventListener("DOMContentLoaded", initIC);
 const outputIC = document.getElementById("agendaICtest");
@@ -12,7 +14,6 @@ function initIC(){
     .then(res => res.text())
     .then(rep => {
         const jsData = JSON.parse(rep.substring(47).slice(0, -2))
-        console.log(jsData);
         const data = [];
         const colz = [];
         const labelArr = [];
@@ -27,17 +28,15 @@ function initIC(){
         jsData.table.rows.forEach(main => {
             tempArr = [];
             for(var i = 0; i < colz.length; i++){
-                if(i == colz.length - 1){
-                    //console.log("0-0")
-                    tempArr.push("0-0")
+                if(i == (colz.length - 1)){
+                    tempArr.push((main.c[colz.length - 1].v != null) ? main.c[colz.length - 1].v : '0-0')
                 } else {
-                    //console.log((main.c[i] != null) ? main.c[i].v : '-')
                     tempArr.push((main.c[i] != null) ? main.c[i].v : '-')
                 }             
             }
             data.push(tempArr)
         })
-        console.log("data", data);
+        //console.log("data", data);
         ICmaker(data);
     })
 }
@@ -47,17 +46,15 @@ function ICmaker(ICdata){
     var devisions = [];
     // devisionsArr is de opbouwArray voor devisions
     var devisionsArr = [];
-    // headers is voor de beschrijving van de kolommen
-    var headers = [];
     ICdata.forEach(ICline =>{
         if(ICline[0].split(" ")[0] == "Division"){
             if(devisionsArr.length !== 0){
                 devisionsArr.pop()
                 devisions.push(devisionsArr)
-                devisions.push(ICline[0])
                 devisionsArr = []
+                devisionsArr.push(ICline[0])
             } else {
-                devisions.push(ICline[0])
+                devisionsArr.push(ICline[0])
                 for(var i = 1; i < ICline.length; i++){
                     headers.push(ICline[i])
                 }
@@ -70,34 +67,51 @@ function ICmaker(ICdata){
     })
     devisionsArr.pop()
     devisions.push(devisionsArr)
-    console.log(devisions, devisionsArr, headers)
+    console.log(devisions, headers)//, devisionsArr
+    devisions.forEach(devision => {
+        var DevisionNaam = devision[0].split(" ")[1]
+        devision.slice(1).forEach(devisionlijn => {
+            //console.log(DevisionNaam, devisionlijn)
+            console.log(IClineElement(DevisionNaam, devisionlijn))
+        })
+    })
+}
 
-
-    let options = {
+function IClineElement(DevisionNaam, LijnArr){ 
+    // Ronde voor de nummer knallen
+    LijnArr[0] = headers[0] + " " + LijnArr[0];
+    // Datefunction to be being inside another function
+    var datum = eval("new " + LijnArr[1])
+    let optionsShort = {
         day: '2-digit', 
         month: '2-digit', 
         year: 'numeric' 
     };
-    let options2 = {
-        weekday: 'long',  // Full name of the day (e.g., Zondag)
-        day: 'numeric',   // Day of the month as a number (e.g., 29)
-        month: 'long',    // Full name of the month (e.g., september)
-        year: 'numeric'   // Full year (e.g., 2024)
+    var dateShort = datum.toLocaleDateString("nl-BE", optionsShort)
+    let optionsLong = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
     };
-    var datum = eval("new " + devisionsArr[0][1])
-    console.log((datum.toLocaleDateString("nl-BE", options2).charAt(0).toUpperCase() + datum.toLocaleDateString("nl-BE", options2).slice(1)), datum.toLocaleDateString("nl-BE", options), devisionsArr[0][1])
+    var dateLong = (datum.toLocaleDateString("nl-BE", optionsLong).charAt(0).toUpperCase() + datum.toLocaleDateString("nl-BE", optionsLong).slice(1))    
+    var DevisionRecord = {
+        Afdeling: DevisionNaam,
+        DateLong: dateLong,
+        DateShort: dateShort
+    };
+    headers.forEach((key, index) => {
+        DevisionRecord[key] = LijnArr[index]
+    })
+    return DevisionRecord
 }
 
-function IClineElement(naam, score, bool, tegenstander){
-    var record = {
-        Naamnr: rankernr(naam.toLowerCase()).returnnr,
-        Naam: naam,
-        Score: Number(score == "½" || score == "1/2" ? "0.5" : score),
-        Wit: bool,
-        Tegenstandernr: rankernr(tegenstander.toLowerCase()).returnnr,
-        Tegenstander: tegenstander,
-        Reeks: rankernr(naam.toLowerCase()).reeks,
-        ReeksAantal: rankernr(naam.toLowerCase()).reeksAantal
-    };
-    return record
+function makeElement(text, classA, classB){
+    const ele = document.createElement('div');
+    ele.classList.add(classA)
+    if(classB !== " "){
+        ele.classList.add(classB)
+    }
+    ele.innerHTML = text;
+    return ele;
 }
