@@ -1,8 +1,7 @@
 // https://docs.google.com/spreadsheets/d/1bmYBrKD63aJ6uHzLmXcBbB5qf5ecCrHEqNV9b7N-X1U/edit?gid=0#gid=0
 const sheetID = '1bmYBrKD63aJ6uHzLmXcBbB5qf5ecCrHEqNV9b7N-X1U'
 const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`
-const sheetName = 'Interclub';
-const url = `${base}&sheet=${sheetName}`
+const sheetNames = ["2024-2025"]//'Interclub'; , "2025-2026"
 // headers is voor de beschrijving van de kolommen
 var headers = [];
 
@@ -10,38 +9,48 @@ document.addEventListener("DOMContentLoaded", initIC);
 const outputIC = document.getElementById("agendaICtest");
 
 function initIC(){
-    fetch(url)
-    .then(res => res.text())
-    .then(rep => {
-        const jsData = JSON.parse(rep.substring(47).slice(0, -2))
-        const data = [];
-        const colz = [];
-        const labelArr = [];
-        jsData.table.cols.forEach((heading, index) => {
-            //console.log(heading.id.charCodeAt(0), heading.id, heading.label)
-            if(index < 7){
-                colz.push(heading.id);
-                labelArr.push(heading.label);
-            }
+    sheetNames.forEach(sheetName => {
+        const url = `${base}&sheet=${sheetName}`
+        fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+            const jsData = JSON.parse(rep.substring(47).slice(0, -2))
+            const data = [];
+            const colz = [];
+            const labelArr = [];
+            jsData.table.cols.forEach((heading, index) => {
+                //console.log(heading.id.charCodeAt(0), heading.id, heading.label)
+                if(index < 7){
+                    colz.push(heading.id);
+                    labelArr.push(heading.label);
+                } else if (index == 7 && heading.label != null){
+                    labelArr.push(heading.label);
+                }
+            })
+            data.push(labelArr);
+            jsData.table.rows.forEach(main => {
+                //console.log(main, colz.length)
+                tempArr = [];
+                if(main.c[colz.length].v !== null){
+                    console.log(main.c[colz.length].v)
+                }
+                for(var i = 0; i < colz.length; i++){
+                    if(i == (colz.length - 1)){
+                        tempArr.push((main.c[colz.length - 1] != null) ? main.c[colz.length - 1].v : '0-0')
+                    } else {
+                        tempArr.push((main.c[i] != null) ? main.c[i].v : '-')
+                    }             
+                }
+                data.push(tempArr)
+            })
+            //console.log("data", data);
+            ICmaker(data, sheetName);
         })
-        data.push(labelArr);
-        jsData.table.rows.forEach(main => {
-            tempArr = [];
-            for(var i = 0; i < colz.length; i++){
-                if(i == (colz.length - 1)){
-                    tempArr.push((main.c[colz.length - 1].v != null) ? main.c[colz.length - 1].v : '0-0')
-                } else {
-                    tempArr.push((main.c[i] != null) ? main.c[i].v : '-')
-                }             
-            }
-            data.push(tempArr)
-        })
-        //console.log("data", data);
-        ICmaker(data);
+        
     })
 }
 
-function ICmaker(ICdata){
+function ICmaker(ICdata, year){
     // devisions maakt per devisie een verzameling van alle rondes
     var devisions = [];
     // devisionsArr is de opbouwArray voor devisions
@@ -67,14 +76,15 @@ function ICmaker(ICdata){
     })
     devisionsArr.pop()
     devisions.push(devisionsArr)
-    console.log(devisions, headers)//, devisionsArr
+    var devisionsObj = [];
     devisions.forEach(devision => {
         var DevisionNaam = devision[0].split(" ")[1]
         devision.slice(1).forEach(devisionlijn => {
-            //console.log(DevisionNaam, devisionlijn)
-            console.log(IClineElement(DevisionNaam, devisionlijn))
+            //console.log(IClineElement(DevisionNaam, devisionlijn))
+            devisionsObj.push(IClineElement(DevisionNaam, devisionlijn))//,year
         })
-    })
+    });
+    console.log(year, devisionsObj)//, devisionsArr
 }
 
 function IClineElement(DevisionNaam, LijnArr){ 
@@ -99,6 +109,7 @@ function IClineElement(DevisionNaam, LijnArr){
         Afdeling: DevisionNaam,
         DateLong: dateLong,
         DateShort: dateShort
+        //,Year: year
     };
     headers.forEach((key, index) => {
         DevisionRecord[key] = LijnArr[index]
